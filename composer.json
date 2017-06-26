@@ -28,7 +28,7 @@
             "App\\" : "src/"
         },
         "files" : [
-            "src\\Foundation\\helpers.php"
+            "src\\helpers.php"
         ]
     },
     "autoload-dev": {

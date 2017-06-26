@@ -9,6 +9,12 @@ $container['renderer'] = function ($c) {
     return new Slim\Views\PhpRenderer($settings['template_path']);
 };
 
+$container["view"] = function($c) {
+    $settings = $c->get("settings")["blade"];
+    $view = new \duncan3dc\Laravel\BladeInstance($settings["view_path"], $settings["cache_path"]);
+    return $view;
+};
+
 // monolog
 $container['logger'] = function ($c) {
     $settings = $c->get('settings')['logger'];

@@ -1,3 +1,5 @@
 /vendor/
+/.idea/
 /logs/*
+/caches/
 !/logs/README.md

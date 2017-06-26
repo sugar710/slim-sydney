@@ -3,12 +3,7 @@
 
 $container = $app->getContainer();
 
-// view renderer
-$container['renderer'] = function ($c) {
-    $settings = $c->get('settings')['renderer'];
-    return new Slim\Views\PhpRenderer($settings['template_path']);
-};
-
+// blade
 $container["view"] = function($c) {
     $settings = $c->get("settings")["blade"];
     $view = new \duncan3dc\Laravel\BladeInstance($settings["view_path"], $settings["cache_path"]);
@@ -22,4 +17,9 @@ $container['logger'] = function ($c) {
     $logger->pushProcessor(new Monolog\Processor\UidProcessor());
     $logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], $settings['level']));
     return $logger;
+};
+
+// flash
+$container['flash'] = function($c) {
+    return new \Slim\Flash\Messages();
 };

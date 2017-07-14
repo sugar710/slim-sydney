@@ -24,15 +24,13 @@ class AuthController extends Controller
      */
     public function login()
     {
-        flash("auth.error");
-        $data = [
-            "error" => array_first($this->flash->getMessage('auth.error'))
-        ];
+        $data = [];
         return $this->view->render("adm.auth.login", $data);
     }
 
     /**
      * 验证登录
+     *
      * @param Request $req
      * @param Response $res
      * @return Response
@@ -42,12 +40,16 @@ class AuthController extends Controller
         $username = $req->getParam("username");
         $password = $req->getParam("password");
         $info = $this->db->table("admin_user")->where("username", $username)->first();
+        if(empty($info)) {
+            flash('auth.error', '账号或密码错误');
+            return $res->withRedirect('/admin/login');
+        }
         $result = password_verify($password, $info->password);
         if ($result) {
             $this->session->set("admUser", $info);
             return $res->withRedirect('/admin/home');
         } else {
-            $this->flash->addMessage('auth.error', "账号或密码错误");
+            flash('auth.error', '账号或密码错误');
             return $res->withRedirect('/admin/login');
         }
     }

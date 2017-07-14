@@ -33,6 +33,39 @@ function url($path)
     return '/' . ltrim($path, '/');
 }
 
+/**
+ * 获取及设置flash
+ *
+ * @param $key
+ * @param null $msg
+ * @return mixed
+ */
 function flash($key, $msg = null){
-    //我想在这里拿到 slim-flash组件
+    $flash = make("flash");
+    if(is_null($msg)) {
+        return array_first($flash->getMessage($key));
+    }
+    return $flash->addMessage($key, $msg);
+}
+
+/**
+ * 获取组件
+ *
+ * @param null $name
+ * @return \App\Container|mixed|null|static
+ */
+function make($name = null) {
+    if(is_null($name)) {
+        return container();
+    }
+    return container()->get($name);
+}
+
+/**
+ * 获取容器
+ *
+ * @return \App\Container|null|static
+ */
+function container() {
+    return \App\Container::getInstance();
 }

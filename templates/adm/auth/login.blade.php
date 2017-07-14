@@ -32,7 +32,7 @@
     <!-- /.login-logo -->
     <div class="login-box-body">
         <p class="login-box-msg">登录</p>
-        @if(!empty($error))
+        @if($error = flash('auth.error'))
             <p style="text-align:center;color:red;">{{ $error }}</p>
         @endif
         <form action="{{ url('/admin/login') }}" method="post">

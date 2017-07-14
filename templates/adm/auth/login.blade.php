@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="{{ admAsset('dist/css/AdminLTE.min.css') }}">
     <!-- iCheck -->
     <link rel="stylesheet" href="{{ admAsset('plugins/iCheck/square/blue.css') }}">
+    <!-- toastr -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -32,9 +34,6 @@
     <!-- /.login-logo -->
     <div class="login-box-body">
         <p class="login-box-msg">登录</p>
-        @if($error = flash('auth.error'))
-            <p style="text-align:center;color:red;">{{ $error }}</p>
-        @endif
         <form action="{{ url('/admin/login') }}" method="post">
             <div class="form-group has-feedback">
                 <input type="text" class="form-control" name="username" placeholder="账号或邮箱">
@@ -71,8 +70,13 @@
 <script src="{{ admAsset('bootstrap/js/bootstrap.min.js') }}"></script>
 <!-- iCheck -->
 <script src="{{ admAsset('plugins/iCheck/icheck.min.js') }}"></script>
+<!-- toastr -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
     $(function () {
+        @if($error = flash('auth.error'))
+        toastr.error('{{ $error }}');
+        @endif
         $('input').iCheck({
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue',

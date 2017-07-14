@@ -19,7 +19,22 @@ $container['logger'] = function ($c) {
     return $logger;
 };
 
+// orm
+$container['db'] = function($c) {
+    $capsule = new \Illuminate\Database\Capsule\Manager();
+    $capsule->addConnection($c['settings']['db']);
+    $capsule->setAsGlobal();
+    $capsule->bootEloquent();
+    return $capsule;
+};
+
 // flash
 $container['flash'] = function($c) {
     return new \Slim\Flash\Messages();
 };
+
+// session
+$container['session'] = function($c) {
+    return new \SlimSession\Helper;
+};
+

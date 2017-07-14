@@ -1,5 +1,9 @@
 <?php
 // Routes
+use App\Controllers\Admin\AuthController;
+
+$app->get('/admin/login', AuthController::class . ':login');
+$app->post('/admin/login', AuthController::class . ':doLogin');
 
 $app->get('/', function ($request, $response, $args) {
     // Sample log message

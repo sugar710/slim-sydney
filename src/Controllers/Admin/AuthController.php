@@ -16,8 +16,7 @@ class AuthController extends Controller
      */
     public function login()
     {
-        $data = [];
-        return $this->view->render("adm.auth.login", $data);
+        return $this->view->render("adm.auth.login");
     }
 
     /**
@@ -44,6 +43,18 @@ class AuthController extends Controller
             flash('auth.error', '账号或密码错误');
             return $res->withRedirect('/admin/login');
         }
+    }
+
+    /**
+     * 退出登录
+     *
+     * @param Request $req
+     * @param Response $res
+     * @return Response
+     */
+    public function logout(Request $req, Response $res) {
+        $this->session->delete("admUser");
+        return $res->withRedirect('/admin/login');
     }
 
 }

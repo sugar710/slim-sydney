@@ -3,17 +3,9 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\Controller;
-use Slim\App;
-use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-/**
- * @property \duncan3dc\Laravel\BladeInstance view
- * @property \Slim\Flash\Messages flash
- * @property \Illuminate\Database\Capsule\Manager db
- * @property \SlimSession\Helper session
- */
 class AuthController extends Controller
 {
 

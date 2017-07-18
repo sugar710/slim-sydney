@@ -4,6 +4,12 @@ namespace App\Controllers;
 
 use Slim\Container;
 
+/**
+ * @property \duncan3dc\Laravel\BladeInstance view
+ * @property \Slim\Flash\Messages flash
+ * @property \Illuminate\Database\Capsule\Manager db
+ * @property \SlimSession\Helper session
+ */
 class Controller {
     protected $container;
 

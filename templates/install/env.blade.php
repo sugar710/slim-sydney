@@ -40,35 +40,11 @@
             <div class="row">
                 <div class="col-xs-12 text-right">
                     <a href="{{ url('/install/welcome') }}" type="button" class="btn btn-default btn-flat">上一步</a>
-                    <button type="submit" class="btn btn-primary btn-flat @if(!session('install.env', true)) disabled @endif">下一步</button>
+                    <a href="{{ url('/install/database') }}" class="btn btn-primary btn-flat @if(!session('install.env', true)) disabled @endif">下一步</a>
                 </div>
             </div>
         </form>
 
     </div>
     <!-- /.login-box-body -->
-@endsection
-
-@section('install-js')
-    <script>
-        $(function () {
-            $('input').iCheck({
-                checkboxClass: 'icheckbox_square-blue',
-                radioClass: 'iradio_square-blue',
-                increaseArea: '20%' // optional
-            });
-
-            $("#fm-install").submit(function () {
-                var fm = $(this);
-                axios.post(fm.attr("action"), fm.serialize()).then(function (res) {
-                    if (res.data.status === 1) {
-                        window.location.href = "{{ url('/install/env') }}";
-                    } else {
-                        toastr.error(res.data.info);
-                    }
-                });
-                return false;
-            });
-        });
-    </script>
 @endsection

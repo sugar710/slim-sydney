@@ -18,7 +18,7 @@
                 <div class="col-xs-8">
                     <div class="checkbox icheck">
                         <label>
-                            <input type="checkbox" name="agreement" value="T"> 同意协议
+                            <input type="checkbox" name="agreement" value="T" checked="checked"> 同意协议
                         </label>
                     </div>
                 </div>

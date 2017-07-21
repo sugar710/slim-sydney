@@ -38,7 +38,7 @@ class InstallController extends Controller {
      */
     public function env() {
         $data = [];
-
+        $this->session->set("install.env", true);
         $data["base"] = value(function(){
             $list = [
                 "os" => [
@@ -57,11 +57,25 @@ class InstallController extends Controller {
                     "name" => "GD库",
                     "condition" => "2.0",
                     "current" => "未知",
-                    "result" => "F"
+                    "result" => "T"
                 ],
             ];
+
+            if(version_compare($list["php"]["condition"], PHP_VERSION) >= 0) {
+               $list["php"]["result"] = "F";
+               $this->session->set("install.env", false);
+            }
+
+            $tmp = function_exists("gd_info") ? gd_info() : array();
+            if(empty($tmp["GD Version"])) {
+                $list["gd"]["current"] = "未安装";
+                $this->session->set("install.env", false);
+            } else {
+                $list["gd"]["current"] = $tmp["GD Version"];
+            }
             return $list;
         });
+
         return $this->view->render("install.env", $data);
     }
 

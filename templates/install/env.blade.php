@@ -27,9 +27,9 @@
                         </td>
                         <td>
                             @if($item["result"] === "T")
-                                <span class="label label-success">Y</span>
+                                <span class="label label-success">T</span>
                                 @else
-                                <span class="label label-danger">N</span>
+                                <span class="label label-danger">F</span>
                                 @endif
                         </td>
                     </tr>
@@ -39,8 +39,8 @@
             </div>
             <div class="row">
                 <div class="col-xs-12 text-right">
-                    <button type="button" class="btn btn-default btn-flat">上一步</button>
-                    <button type="submit" class="btn btn-primary btn-flat">下一步</button>
+                    <a href="{{ url('/install/welcome') }}" type="button" class="btn btn-default btn-flat">上一步</a>
+                    <button type="submit" class="btn btn-primary btn-flat @if(!session('install.env', true)) disabled @endif">下一步</button>
                 </div>
             </div>
         </form>

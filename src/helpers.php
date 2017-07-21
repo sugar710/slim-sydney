@@ -49,6 +49,25 @@ function flash($key, $msg = null){
 }
 
 /**
+ * 获取及设置session
+ *
+ * @param $key
+ * @param null $default
+ * @return bool|mixed
+ */
+function session($key, $default = null) {
+    $session = make("session");
+    if(is_string($key)) {
+        return $session->get($key, $default);
+    } else if(is_array($key)) {
+        foreach($key as $sk => $sv) {
+            $session->set($sk, $sv);
+        }
+        return true;
+    }
+}
+
+/**
  * 获取组件
  *
  * @param null $name

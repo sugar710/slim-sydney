@@ -19,8 +19,8 @@ return [
         ],
         'db' => [
             'driver' => 'mysql',
-            'host' => 'localhost',
-            'database' => 'laravel_sydney',
+            'host' => '192.168.166.88',
+            'database' => 'slim_sydney',
             'username' => 'root',
             'password' => 'root',
             'charset' => 'utf8',

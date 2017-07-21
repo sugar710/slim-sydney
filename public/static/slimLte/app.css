@@ -1,0 +1,32 @@
+.install-box {
+    width:500px;
+}
+
+.install-box {
+    width: 500px;
+    margin: 7% auto;
+}
+@media (max-width: 768px) {
+    .install-box {
+        width: 90%;
+        margin-top: 20px;
+    }
+}
+
+.install-box-body{
+    background: #fff;
+    padding: 20px;
+    border-top: 0;
+    color: #666;
+}
+.install-box-msg {
+    margin: 0;
+    text-align: center;
+    padding: 0 20px 20px 20px;
+}
+
+.install-agreement-box {
+    padding:15px;
+    font-size:13px;
+    line-height:24px;
+}

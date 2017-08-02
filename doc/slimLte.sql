@@ -1,12 +1,15 @@
+
+
 -- -----------------------------------------------------
--- Table `admin_user`
+-- Table `sydney`.`admin_user`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `admin_user` (
+CREATE TABLE IF NOT EXISTS `sydney`.`admin_user` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL COMMENT '用户名称',
   `avatar` VARCHAR(50) NOT NULL COMMENT '头像地址',
   `username` VARCHAR(45) NOT NULL COMMENT '登录账号',
   `password` VARCHAR(60) NOT NULL COMMENT '用户密码',
+  `email` VARCHAR(200) NOT NULL COMMENT '邮箱',
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
   `deleted_at` DATETIME NULL,
@@ -16,9 +19,9 @@ COMMENT = '用户';
 
 
 -- -----------------------------------------------------
--- Table `admin_role`
+-- Table `sydney`.`admin_role`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `admin_role` (
+CREATE TABLE IF NOT EXISTS `sydney`.`admin_role` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
   `slug` VARCHAR(50) NOT NULL,
@@ -31,9 +34,9 @@ COMMENT = '角色';
 
 
 -- -----------------------------------------------------
--- Table `admin_user_role`
+-- Table `sydney`.`admin_user_role`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `admin_user_role` (
+CREATE TABLE IF NOT EXISTS `sydney`.`admin_user_role` (
   `id` INT NULL AUTO_INCREMENT,
   `admin_role_id` INT NOT NULL,
   `admin_user_id` INT NOT NULL,
@@ -45,9 +48,9 @@ COMMENT = '用户角色关联表';
 
 
 -- -----------------------------------------------------
--- Table `admin_permission`
+-- Table `sydney`.`admin_permission`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `admin_permission` (
+CREATE TABLE IF NOT EXISTS `sydney`.`admin_permission` (
   `id` INT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL COMMENT '权限名称',
   `slug` VARCHAR(45) NOT NULL COMMENT '权限标记',
@@ -60,9 +63,9 @@ COMMENT = '权限';
 
 
 -- -----------------------------------------------------
--- Table `admin_role_permission`
+-- Table `sydney`.`admin_role_permission`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `admin_role_permission` (
+CREATE TABLE IF NOT EXISTS `sydney`.`admin_role_permission` (
   `id` INT NULL AUTO_INCREMENT,
   `admin_role_id` INT NOT NULL,
   `admin_permission_id` INT NOT NULL,
@@ -74,9 +77,9 @@ COMMENT = '角色权限关联表';
 
 
 -- -----------------------------------------------------
--- Table `admin_menu`
+-- Table `sydney`.`admin_menu`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `admin_menu` (
+CREATE TABLE IF NOT EXISTS `sydney`.`admin_menu` (
   `id` INT NULL AUTO_INCREMENT,
   `pid` INT NOT NULL DEFAULT 0,
   `name` VARCHAR(45) NOT NULL COMMENT '菜单名称',
@@ -93,9 +96,9 @@ COMMENT = '菜单管理';
 
 
 -- -----------------------------------------------------
--- Table `admin_user_permission`
+-- Table `sydney`.`admin_user_permission`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `admin_user_permission` (
+CREATE TABLE IF NOT EXISTS `sydney`.`admin_user_permission` (
   `id` INT NULL AUTO_INCREMENT,
   `admin_user_id` INT NOT NULL,
   `admin_permission_id` INT NOT NULL,
@@ -107,9 +110,9 @@ COMMENT = '用户权限关联表';
 
 
 -- -----------------------------------------------------
--- Table `setting`
+-- Table `sydney`.`setting`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `setting` (
+CREATE TABLE IF NOT EXISTS `sydney`.`setting` (
   `id` INT NULL AUTO_INCREMENT,
   `key` VARCHAR(50) NOT NULL,
   `value` VARCHAR(150) NOT NULL,
@@ -121,9 +124,9 @@ COMMENT = '系统配置';
 
 
 -- -----------------------------------------------------
--- Table `category`
+-- Table `sydney`.`category`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `category` (
+CREATE TABLE IF NOT EXISTS `sydney`.`category` (
   `id` INT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL COMMENT '分类名称',
   `slug` VARCHAR(45) NOT NULL COMMENT '分类标记',
@@ -135,9 +138,9 @@ COMMENT = '分类';
 
 
 -- -----------------------------------------------------
--- Table `article`
+-- Table `sydney`.`article`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `article` (
+CREATE TABLE IF NOT EXISTS `sydney`.`article` (
   `id` INT NULL AUTO_INCREMENT,
   `category_id` INT NOT NULL COMMENT '文章分类ID',
   `title` VARCHAR(150) NOT NULL COMMENT '文章标题',
@@ -153,9 +156,9 @@ COMMENT = '文章表';
 
 
 -- -----------------------------------------------------
--- Table `tags`
+-- Table `sydney`.`tags`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `tags` (
+CREATE TABLE IF NOT EXISTS `sydney`.`tags` (
   `id` INT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL COMMENT '标签名称',
   `use_cnt` INT NOT NULL DEFAULT 0 COMMENT '使用数量',
@@ -167,9 +170,9 @@ COMMENT = '标签';
 
 
 -- -----------------------------------------------------
--- Table `article_tag`
+-- Table `sydney`.`article_tag`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `article_tag` (
+CREATE TABLE IF NOT EXISTS `sydney`.`article_tag` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `tag_id` INT NOT NULL COMMENT '标签ID',
   `article_id` INT NOT NULL COMMENT '文章ID',
@@ -181,9 +184,9 @@ COMMENT = '文章标签关联表';
 
 
 -- -----------------------------------------------------
--- Table `comment`
+-- Table `sydney`.`comment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `comment` (
+CREATE TABLE IF NOT EXISTS `sydney`.`comment` (
   `id` INT NULL AUTO_INCREMENT,
   `article_id` INT NOT NULL COMMENT '文章ID',
   `content` VARCHAR(150) NOT NULL COMMENT '评论内容',
@@ -194,3 +197,7 @@ CREATE TABLE IF NOT EXISTS `comment` (
 ENGINE = InnoDB
 COMMENT = '评论';
 
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

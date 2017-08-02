@@ -19,7 +19,9 @@
         "duncan3dc/blade": "^3.4",
         "zeuxisoo/slim-whoops": "^0.6.1",
         "vlucas/phpdotenv": "^2.4",
-        "slim/flash": "^0.2.0"
+        "slim/flash": "^0.2.0",
+        "illuminate/database": "~5.1",
+        "bryanjhv/slim-session": "~3.0"
     },
     "require-dev": {
         "phpunit/phpunit": ">=4.8 < 6.0"

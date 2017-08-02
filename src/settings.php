@@ -17,5 +17,15 @@ return [
             'path' => __DIR__ . '/../logs/app.log',
             'level' => \Monolog\Logger::DEBUG,
         ],
+        'db' => [
+            'driver' => 'mysql',
+            'host' => '192.168.166.88',
+            'database' => 'slim_sydney',
+            'username' => 'root',
+            'password' => 'root',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+        ]
     ],
 ];

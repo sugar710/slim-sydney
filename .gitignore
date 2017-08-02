@@ -3,3 +3,5 @@
 /logs/*
 /caches/
 !/logs/README.md
+doc/slim-sydney.mwb.bak
+public/install.lock

@@ -164,6 +164,7 @@ class InstallController extends Controller {
         $this->flush();
         $this->createTables();
         $this->createAccount();
+        $this->createEnvFile();
         touch('./install.lock');
     }
 
@@ -179,6 +180,7 @@ class InstallController extends Controller {
             $result = true;
             try {
                 $pdo->exec($sql);
+                $this->logger->info("执行SQL:" . $sql);
             } catch(\Exception $e) {
                 $errMsg = $e->getMessage();
                 $result = false;
@@ -200,19 +202,35 @@ class InstallController extends Controller {
      * @return bool
      */
     private function createAccount() {
-        $now = time();
+        $now = date("Y-m-d H:i:s");
         $pdo = $this->getPdo();
         $config = $this->session->get("install.admin");
-        $sth = $pdo->prepare("INSERT INTO admin_user (name,avatar,username,password,created_at,updated_at) VALUES(:name,:avatar,:username,:password,:created_at,:updated_at)");
+        $sth = $pdo->prepare("INSERT INTO admin_user (name,avatar,username,password,email,created_at,updated_at) VALUES(:name,:avatar,:username,:password,:email,:created_at,:updated_at)");
         $sth->bindValue(":name", $config["name"]);
         $sth->bindValue(":avatar", "/public/avatar-default.png");
         $sth->bindValue(":username", $config["username"]);
         $sth->bindValue(":password", password_hash($config["password"], PASSWORD_BCRYPT));
+        $sth->bindValue(":email", $config["email"]);
         $sth->bindValue(":created_at", $now);
         $sth->bindValue(":updated_at", $now);
         $result = $sth->execute();
         $this->showMsg("创建管理员账号", $result ? "ok" : "error");
+        if(!$result) {
+            $this->logger->info("创建管理员错误：" . print_r($sth->errorInfo(), true));
+        }
         return $result;
+    }
+
+    /**
+     * 创建.env配置文件
+     */
+    private function createEnvFile() {
+        $config = $this->session->get("install.database");
+        $file = "../config.env";
+        file_put_contents($file, "DB_HOST=" . $config["host"] . "\n", FILE_APPEND);
+        file_put_contents($file, "DB_NAME=" . $config["name"] . "\n", FILE_APPEND);
+        file_put_contents($file, "DB_USER=" . $config["user"] . "\n", FILE_APPEND);
+        file_put_contents($file, "DB_PASS=" . $config["password"] . "\n", FILE_APPEND);
     }
 
     /**
@@ -256,6 +274,7 @@ class InstallController extends Controller {
      */
     private function getSqlList($sqlFile = "../doc/slimLte.sql") {
         $sqlContent = file_get_contents($sqlFile);
+        $sqlContent = str_replace("`sydney`.", "", $sqlContent);
         $sqlContent = str_replace("\r", "\n", $sqlContent);
         $sqls = explode("\n", $sqlContent);
         $sqls = array_filter($sqls, function($item) {

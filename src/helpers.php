@@ -33,6 +33,21 @@ function url($path)
     return '/' . ltrim($path, '/');
 }
 
+if(!function_exists('env')) {
+    /**
+     * 获取ENV配置项
+     *
+     * @param $key
+     * @param string $default
+     * @return string $value
+     */
+    function env($key, $default = '') {
+        $value = getenv($key);
+        return $value === false ? $default : $value;
+    }
+}
+
+
 /**
  * 获取及设置flash
  *

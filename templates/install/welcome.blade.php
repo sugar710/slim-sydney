@@ -4,7 +4,7 @@
     <!-- /.login-logo -->
     <div class="install-box-body">
         <p class="install-box-msg">安装协议</p>
-        <form action="{{ url('/install/agree') }}" method="post" id="fm-install">
+        <form action="{{ url('/install/agree/verify') }}" method="post" id="fm-install">
             <div class="row">
                 <div class="install-agreement-box">
                     1. 本项目只为测试gitflow开发流程<br/>

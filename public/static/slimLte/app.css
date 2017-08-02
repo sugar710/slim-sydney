@@ -30,3 +30,15 @@
     font-size:13px;
     line-height:24px;
 }
+
+.install-box .install-message {
+    height:240px;
+    text-indent: 15px;
+    font-size:13px;
+    margin-bottom:20px;
+    overflow:auto;
+}
+.install-message span {
+    float:right;
+    margin-right:20px;
+}

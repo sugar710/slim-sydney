@@ -14,6 +14,10 @@ $app->get('/admin/logout', AuthController::class . ':logout');
 
 $app->get('/admin/home', HomeController::class . ':home');
 
+$app->get("/install", function(Request $req, Response $res) {
+    return $res->withRedirect("/install/welcome");
+});
+
 $app->group("/install", function() use ($app){
 
     $app->get("/", function(Request $req, Response $res){

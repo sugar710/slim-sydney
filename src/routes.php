@@ -5,6 +5,7 @@ use Slim\Http\Response;
 use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\HomeController;
 use App\Controllers\InstallController;
+use App\Controllers\Admin\AdminPermissionController;
 
 $app->get('/admin/login', AuthController::class . ':login');
 
@@ -14,6 +15,10 @@ $app->get('/admin/logout', AuthController::class . ':logout');
 
 $app->group("/admin", function() use ($app) {
     $app->get("/home", HomeController::class . ':home');
+
+    //权限管理
+    $app->get('/permission', AdminPermissionController::class . ':index');
+
 })->add(\App\Middleware\VerifyAdminLoginMiddleware::class);
 
 $app->get("/install", function(Request $req, Response $res) {

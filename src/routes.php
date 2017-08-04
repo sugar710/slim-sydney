@@ -12,7 +12,9 @@ $app->post('/admin/login', AuthController::class . ':doLogin');
 
 $app->get('/admin/logout', AuthController::class . ':logout');
 
-$app->get('/admin/home', HomeController::class . ':home');
+$app->group("/admin", function() use ($app) {
+    $app->get("/home", HomeController::class . ':home');
+})->add(\App\Middleware\VerifyAdminLoginMiddleware::class);
 
 $app->get("/install", function(Request $req, Response $res) {
     return $res->withRedirect("/install/welcome");

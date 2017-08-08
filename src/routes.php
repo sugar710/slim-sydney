@@ -6,6 +6,7 @@ use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\HomeController;
 use App\Controllers\InstallController;
 use App\Controllers\Admin\AdminPermissionController;
+use App\Middleware\VerifyAdminLoginMiddleware;
 
 $app->get('/admin/login', AuthController::class . ':login');
 
@@ -18,8 +19,10 @@ $app->group("/admin", function() use ($app) {
 
     //权限管理
     $app->get('/permission', AdminPermissionController::class . ':index');
+    $app->get('/permission/data', AdminPermissionController::class . ':data');
+    $app->post('/permission', AdminPermissionController::class . ':save');
 
-})->add(\App\Middleware\VerifyAdminLoginMiddleware::class);
+})->add(VerifyAdminLoginMiddleware::class);
 
 $app->get("/install", function(Request $req, Response $res) {
     return $res->withRedirect("/install/welcome");

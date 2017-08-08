@@ -33,6 +33,17 @@ function url($path)
     return '/' . ltrim($path, '/');
 }
 
+/**
+ * 管理后台访问地址生成
+ *
+ * @param $path
+ * @return string
+ */
+function admUrl($path) {
+    $admPath = make("settings")["admin"]["path"] ?: "admin";
+    return '/' .$admPath . '/' . ltrim($path, '/');
+}
+
 if(!function_exists('env')) {
     /**
      * 获取ENV配置项

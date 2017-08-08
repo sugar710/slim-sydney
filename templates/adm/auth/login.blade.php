@@ -29,12 +29,12 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <a href="{{ url('/admin') }}"><b>Slim</b>LTE</a>
+        <a href="{{ admUrl('/') }}"><b>Slim</b>LTE</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
         <p class="login-box-msg">登录</p>
-        <form action="{{ url('/admin/login') }}" method="post">
+        <form action="{{ admUrl('/login') }}" method="post">
             <div class="form-group has-feedback">
                 <input type="text" class="form-control" name="username" placeholder="账号或邮箱">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>

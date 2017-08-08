@@ -20,5 +20,6 @@ class BaseController extends Controller
         parent::__construct($container);
         $this->adminUser = $this->session->get("admUser");
         $this->view->share("adminUser", $this->adminUser);
+        $this->db;
     }
 }

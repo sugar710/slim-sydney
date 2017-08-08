@@ -47,7 +47,7 @@
                 </a>
                 <ul class="treeview-menu">
                     <li>
-                        <a href="{{ url('/admin/permission') }}">
+                        <a href="{{ admUrl('/permission') }}">
                             <i class="fa fa-circle-o"></i>
                             权限管理
                         </a>

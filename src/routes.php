@@ -20,6 +20,7 @@ $app->group("/admin", function() use ($app) {
     //权限管理
     $app->get('/permission', AdminPermissionController::class . ':index');
     $app->get('/permission/data', AdminPermissionController::class . ':data');
+    $app->get('/permission/delete', AdminPermissionController::class . ':doDelete');
     $app->post('/permission', AdminPermissionController::class . ':save');
 
 })->add(VerifyAdminLoginMiddleware::class);

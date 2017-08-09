@@ -31,7 +31,7 @@
                                     <li class="divider"></li>
                                     <li><a href="javascript:;" data-action="clear-all">全部清选</a></li>
                                     <li class="divider"></li>
-                                    <li><a href="javascript:;" data-action="batch-del">批量删除</a></li>
+                                    <li><a href="javascript:;" data-href="{{ admUrl('/permission/delete') }}" data-action="batch-del">批量删除</a></li>
                                 </ul>
                             </div>
                             <a href="{{ admUrl('/permission/data') }}" class="btn btn-default btn-sm pull-left" style="margin-right:10px;">创建</a>
@@ -59,7 +59,7 @@
                                 <th>更新时间</th>
                             </tr>
                             @foreach($list as $item)
-                            <tr>
+                            <tr data-id="{{ $item->id }}">
                                 <td>{{ $item->id }}</td>
                                 <td>
                                     <a href="{{ admUrl('/permission/data?id=' . $item->id) }}" title="编辑权限">{{ $item->name or '未命名' }}</a>
@@ -71,7 +71,6 @@
                             @endforeach
                         </table>
                     </div>
-                    <!-- /.box-body -->
                     <!-- /.box-body -->
                     <div class="box-footer clearfix">
                         <ul class="pagination pagination-sm no-margin pull-right">

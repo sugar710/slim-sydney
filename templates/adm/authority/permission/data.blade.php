@@ -4,7 +4,7 @@
     <section class="content-header">
         <h1>
             权限管理
-            <small>@if(empty($info))创建@else编辑@endif</small>
+            <small>@if(empty($info->id))创建@else编辑@endif</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -27,11 +27,11 @@
                         <div class="box-body">
                             <div class="form-group">
                                 <label>权限名称</label>
-                                <input type="text" class="form-control" name="name" value="{{ $info->name or '' }}" placeholder="请输入权限名称">
+                                <input type="text" class="form-control" name="name" value="{{ old('name', $info->name) }}" placeholder="请输入权限名称">
                             </div>
                             <div class="form-group">
                                 <label>权限标识</label>
-                                <input type="text" class="form-control" name="slug" value="{{ $info->slug or '' }}" placeholder="请输入权限标识">
+                                <input type="text" class="form-control" name="slug" value="{{ old('slug', $info->slug) }}" placeholder="请输入权限标识">
                             </div>
                         </div>
                         <!-- /.box-body -->

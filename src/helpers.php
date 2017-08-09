@@ -33,6 +33,17 @@ function url($path)
     return '/' . ltrim($path, '/');
 }
 
+/**
+ * 管理后台访问地址生成
+ *
+ * @param $path
+ * @return string
+ */
+function admUrl($path) {
+    $admPath = make("settings")["admin"]["path"] ?: "admin";
+    return '/' .$admPath . '/' . ltrim($path, '/');
+}
+
 if(!function_exists('env')) {
     /**
      * 获取ENV配置项
@@ -47,6 +58,43 @@ if(!function_exists('env')) {
     }
 }
 
+function responseReject($message, $url) {
+    flashReject(make("request")->getParams());
+    flash("action.error", $message);
+    return make("response")->withRedirect($url);
+}
+
+function responseResolve($message, $url) {
+    flash("action.success", $message);
+    return make("response")->withRedirect($url);
+}
+
+/**
+ * 闪存提交的数据
+ *
+ * @param $params
+ */
+function flashReject($params) {
+    $params = $params ?: [];
+    flash("req.is_back", "T");
+    flash("req.data", json_encode($params));
+}
+
+/**
+ * 获取上次输入的值
+ *
+ * @param string $key
+ * @param null $default
+ * @return null
+ */
+function old($key, $default = null) {
+    $is_back = flash("req.is_back");
+    if(empty($key) || $is_back != "T") {
+        return $default;
+    }
+    $data = json_decode(flash("req.data") ?: "[]",true);
+    return isset($data[$key]) ? $data[$key] : $default;
+}
 
 /**
  * 获取及设置flash

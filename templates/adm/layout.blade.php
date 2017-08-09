@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="{{ admAsset('plugins/daterangepicker/daterangepicker.css') }}">
     <!-- bootstrap wysihtml5 - text editor -->
     <link rel="stylesheet" href="{{ admAsset('plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('slimLte/app.css') }}">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -39,7 +39,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini" data-toastr-success="{{ flash('action.success') }}" data-toastr-error="{{ flash('action.error') }}">
 <div class="wrapper">
 
 @include("adm.layout-header")
@@ -262,7 +262,7 @@
 <script src="{{ admAsset('bootstrap/js/bootstrap.min.js') }}"></script>
 <!-- Morris.js charts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-<script src="{{ admAsset('plugins/morris/morris.min.js') }}"></script>
+{{--<script src="{{ admAsset('plugins/morris/morris.min.js') }}"></script>--}}
 <!-- Sparkline -->
 <script src="{{ admAsset('plugins/sparkline/jquery.sparkline.min.js') }}"></script>
 <!-- jvectormap -->
@@ -286,18 +286,15 @@
 <!-- AdminLTE App -->
 <script src="{{ admAsset('dist/js/app.min.js') }}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{{ admAsset('dist/js/pages/dashboard.js') }}"></script>
+{{--<script src="{{ admAsset('dist/js/pages/dashboard.js') }}"></script>--}}
 <!-- AdminLTE for demo purposes -->
 <script src="{{ admAsset('dist/js/demo.js') }}"></script>
+<script src="{{ asset('/slimLte/app.js') }}"></script>
 <script type="text/javascript">
     $(function(){
-        toastr.options = {
-            closeButton: true,
-            progressBar: true,
-            showMethod: 'slideDown',
-            timeOut: 4000
-        };
+
     });
 </script>
+@yield('js')
 </body>
 </html>

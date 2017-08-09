@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\AdminPermission;
 use App\Models\Model;
+use App\Utils\Paginate;
 use Slim\Exception\SlimException;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -29,9 +30,17 @@ class AdminPermissionController extends BaseController
      */
     public function index(Request $req, Response $res)
     {
-        $list = AdminPermission::all();
+        $size = 20;
+        $page = $req->getParam("page", 1);
+        $page = $page > 0 ? $page : 1;
+
+        $query = $this->table("admin_permission");
+        $count = $query->count();
+
+        $list = $query->skip(($page - 1) * $size)->take($size)->get();
         $data = [
-            "list" => $list
+            "list" => $list,
+            "page" => new Paginate($count, $size)
         ];
         return $this->render("permission.index", $data);
     }
@@ -50,7 +59,7 @@ class AdminPermissionController extends BaseController
         if (!empty($id)) {
             $info = AdminPermission::find($id);
         } else {
-            $info = new Model();
+            $info = new AdminPermission();
         }
         $data["info"] = $info;
         return $this->render("permission.data", $data);

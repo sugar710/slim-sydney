@@ -12,7 +12,8 @@ use Slim\Http\Response;
  * @property \SlimSession\Helper session
  * @property \Monolog\Logger logger
  */
-class Controller {
+class Controller
+{
     protected $container;
     protected $req;
     protected $res;
@@ -22,11 +23,21 @@ class Controller {
         $this->container = $container;
     }
 
-    public function __get($name) {
-        if($value = $this->container->get($name)) {
+    public function __get($name)
+    {
+        if ($value = $this->container->get($name)) {
             return $value;
         }
         throw new \Exception($name . '不存在');
+    }
+
+    /**
+     * @param string $tableName
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function table($tableName)
+    {
+        return $this->db->table($tableName);
     }
 
     /**
@@ -37,16 +48,17 @@ class Controller {
      * @param array $data
      * @return Response
      */
-    public function jsonTip($status = 1, $info = "OK", $data = []) {
+    public function jsonTip($status = 1, $info = "OK", $data = [])
+    {
         $json = compact("status", "info");
         $this->logger->info(print_r($json, true));
-        if(is_array($status)) {
+        if (is_array($status)) {
             $json = $status;
         } else {
-            if(!empty($data)) {
+            if (!empty($data)) {
                 $json["data"] = $data;
             }
         }
-        return (new Response())->withJson($json, 200,  JSON_UNESCAPED_UNICODE);
+        return (new Response())->withJson($json, 200, JSON_UNESCAPED_UNICODE);
     }
 }

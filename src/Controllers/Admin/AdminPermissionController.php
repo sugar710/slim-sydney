@@ -33,14 +33,20 @@ class AdminPermissionController extends BaseController
         $size = 20;
         $page = $req->getParam("page", 1);
         $page = $page > 0 ? $page : 1;
-
+        $keyword = $req->getParam("keyword", "");
         $query = $this->table("admin_permission");
+        if(!empty($keyword)) {
+            $query->where(function($q) use ($keyword) {
+                $q->orWhere("name", "like", "%{$keyword}%")->orWhere("slug", $keyword);
+            });
+        }
         $count = $query->count();
 
         $list = $query->skip(($page - 1) * $size)->take($size)->get();
         $data = [
             "list" => $list,
-            "page" => new Paginate($count, $size)
+            "page" => new Paginate($count, $size),
+            "req" => $req->getParams(),
         ];
         return $this->render("permission.index", $data);
     }
@@ -179,7 +185,7 @@ class AdminPermissionController extends BaseController
             return $this->reject("请选择要删除的项", $this->redirectToList());
         }
 
-        $result = $this->db->table("admin_permission")->whereIn("id", $id)->delete();
+        $result = $this->table("admin_permission")->whereIn("id", $id)->delete();
 
         if ($result !== false) {
             return $this->resolve("权限删除成功", $this->redirectToList());

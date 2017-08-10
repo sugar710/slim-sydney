@@ -36,7 +36,7 @@
         <p class="login-box-msg">登录</p>
         <form action="{{ admUrl('/login') }}" method="post">
             <div class="form-group has-feedback">
-                <input type="text" class="form-control" name="username" placeholder="账号或邮箱">
+                <input type="text" class="form-control" name="username" autofocus="autofocus" placeholder="账号或邮箱">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">

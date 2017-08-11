@@ -7,9 +7,9 @@
             <small>权限列表</small>
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Tables</a></li>
-            <li class="active">Simple</li>
+            <li><a href="{{ admUrl('/') }}"><i class="fa fa-dashboard"></i> 首页</a></li>
+            <li><a href="{{ admUrl('/permission') }}">权限管理</a></li>
+            <li class="active">权限列表</li>
         </ol>
     </section>
     <section class="content">

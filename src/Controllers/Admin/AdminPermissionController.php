@@ -3,7 +3,6 @@
 namespace App\Controllers\Admin;
 
 use App\Models\AdminPermission;
-use App\Models\Model;
 use App\Utils\Paginate;
 use Slim\Exception\SlimException;
 use Slim\Http\Request;
@@ -35,8 +34,8 @@ class AdminPermissionController extends BaseController
         $page = $page > 0 ? $page : 1;
         $keyword = $req->getParam("keyword", "");
         $query = $this->table("admin_permission");
-        if(!empty($keyword)) {
-            $query->where(function($q) use ($keyword) {
+        if (!empty($keyword)) {
+            $query->where(function ($q) use ($keyword) {
                 $q->orWhere("name", "like", "%{$keyword}%")->orWhere("slug", $keyword);
             });
         }
@@ -62,12 +61,7 @@ class AdminPermissionController extends BaseController
     {
         $data = [];
         $id = $req->getParam("id", 0);
-        if (!empty($id)) {
-            $info = AdminPermission::find($id);
-        } else {
-            $info = new AdminPermission();
-        }
-        $data["info"] = $info;
+        $data["info"] = (int)$id > 0 ? AdminPermission::find($id) : new AdminPermission;
         return $this->render("permission.data", $data);
     }
 

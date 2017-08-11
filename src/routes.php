@@ -5,6 +5,8 @@ use Slim\Http\Response;
 use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\HomeController;
 use App\Controllers\InstallController;
+use App\Controllers\Admin\AdminPermissionController;
+use App\Middleware\VerifyAdminLoginMiddleware;
 
 $app->get('/admin/login', AuthController::class . ':login');
 
@@ -12,7 +14,16 @@ $app->post('/admin/login', AuthController::class . ':doLogin');
 
 $app->get('/admin/logout', AuthController::class . ':logout');
 
-$app->get('/admin/home', HomeController::class . ':home');
+$app->group("/admin", function() use ($app) {
+    $app->get("/home", HomeController::class . ':home');
+
+    //权限管理
+    $app->get('/permission', AdminPermissionController::class . ':index')->setName("admin.permission");
+    $app->get('/permission/data', AdminPermissionController::class . ':data');
+    $app->get('/permission/delete', AdminPermissionController::class . ':doDelete');
+    $app->post('/permission', AdminPermissionController::class . ':save');
+
+})->add(VerifyAdminLoginMiddleware::class);
 
 $app->get("/install", function(Request $req, Response $res) {
     return $res->withRedirect("/install/welcome");

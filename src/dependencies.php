@@ -28,6 +28,15 @@ $container['db'] = function($c) {
     return $capsule;
 };
 
+$container['schema'] = function($c) {
+    /**
+     * @var \Illuminate\Database\Capsule\Manager $db
+     */
+    $db = $c->get("db");
+    $builder = $db->getConnection()->getSchemaBuilder();
+    return $builder;
+};
+
 // flash
 $container['flash'] = function($c) {
     return new \Slim\Flash\Messages();
@@ -37,4 +46,8 @@ $container['flash'] = function($c) {
 $container['session'] = function($c) {
     return new \SlimSession\Helper;
 };
+
+$container["req"] = $container["request"];
+
+$container["res"] = $container["response"];
 

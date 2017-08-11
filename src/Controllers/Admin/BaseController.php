@@ -15,10 +15,27 @@ class BaseController extends Controller
 {
     protected $adminUser;
 
+    protected $viewFolder = 'adm';
+
     public function __construct(Container $container)
     {
         parent::__construct($container);
         $this->adminUser = $this->session->get("admUser");
         $this->view->share("adminUser", $this->adminUser);
+        $this->db;
     }
+
+    /**
+     * 渲染页面
+     *
+     * @param $view
+     * @param array $params
+     * @return string
+     */
+    public function render($view, array $params = [])
+    {
+        $view = $this->viewFolder . '.' . ltrim($view, $this->viewFolder);
+        return $this->view->render($view, $params);
+    }
+
 }

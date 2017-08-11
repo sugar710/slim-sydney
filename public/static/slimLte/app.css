@@ -42,3 +42,14 @@
     float:right;
     margin-right:20px;
 }
+
+.box-actions ul.dropdown-menu {
+    font-size:13px;
+}
+.box-actions ul.dropdown-menu .divider {
+    /*margin:5px 0;*/
+    margin:0;
+}
+.box-actions ul.dropdown-menu a {
+    padding:5px 20px;
+}

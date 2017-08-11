@@ -7,9 +7,9 @@
             <small>@if(empty($info->id))创建@else编辑@endif</small>
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Tables</a></li>
-            <li class="active">Simple</li>
+            <li><a href="{{ admUrl('/') }}"><i class="fa fa-dashboard"></i> 首页</a></li>
+            <li><a href="{{ admUrl('/permission') }}">权限管理</a></li>
+            <li class="active">@if(empty($info->id))创建@else编辑@endif权限</li>
         </ol>
     </section>
     <section class="content">

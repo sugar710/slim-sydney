@@ -7,9 +7,9 @@
             <small>权限列表</small>
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Tables</a></li>
-            <li class="active">Simple</li>
+            <li><a href="{{ admUrl('/') }}"><i class="fa fa-dashboard"></i> 首页</a></li>
+            <li><a href="{{ admUrl('/permission') }}">权限管理</a></li>
+            <li class="active">权限列表</li>
         </ol>
     </section>
     <section class="content">
@@ -37,15 +37,16 @@
                             <a href="{{ admUrl('/permission/data') }}" class="btn btn-default btn-sm pull-left" style="margin-right:10px;">创建</a>
                         </div>
                         <div class="box-tools clearfix">
+                            <form action="{{ admUrl('/permission') }}" method="GET">
+                                <div class="input-group input-group-sm" style="width: 180px;">
+                                    <input type="text" name="keyword" value="{{ $req["keyword"] or '' }}" class="form-control pull-right" placeholder="Search">
 
-                            <div class="input-group input-group-sm" style="width: 150px;">
-                                <input type="text" name="table_search" class="form-control pull-right"
-                                       placeholder="Search">
-
-                                <div class="input-group-btn">
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                    <div class="input-group-btn">
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                        <a href="{{ admUrl('/permission') }}" class="btn btn-default">全部</a>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                     <!-- /.box-header -->

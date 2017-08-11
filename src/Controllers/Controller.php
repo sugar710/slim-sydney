@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use Slim\Container;
+use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
@@ -11,12 +12,14 @@ use Slim\Http\Response;
  * @property \Illuminate\Database\Capsule\Manager db
  * @property \SlimSession\Helper session
  * @property \Monolog\Logger logger
+ * @property \Illuminate\Database\Schema\Builder schema
+ * @property \Slim\Http\Request req
+ * @property \Slim\Http\Response res
+ * @property \Slim\Router router
  */
 class Controller
 {
     protected $container;
-    protected $req;
-    protected $res;
 
     public function __construct(Container $container)
     {
@@ -60,5 +63,41 @@ class Controller
             }
         }
         return (new Response())->withJson($json, 200, JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * 操作成功响应
+     *
+     * @param $message
+     * @param $url
+     * @return mixed
+     */
+    public function resolve($message, $url)
+    {
+        return responseResolve($message, $url);
+    }
+
+    /**
+     * 操作失败响应
+     *
+     * @param $message
+     * @param $url
+     * @return mixed
+     */
+    public function reject($message, $url)
+    {
+        return responseReject($message, $url);
+    }
+
+    /**
+     * 获取返回地址
+     *
+     * @param $fallback
+     * @return string
+     */
+    protected function backUrl($fallback = '/')
+    {
+        $urls = make("request")->getHeader("HTTP_REFERER");
+        return $urls ? array_first($urls) : admUrl($fallback);
     }
 }

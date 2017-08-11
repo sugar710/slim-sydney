@@ -32,30 +32,10 @@ class BaseController extends Controller
      * @param array $params
      * @return string
      */
-    public function render($view, array $params = []) {
+    public function render($view, array $params = [])
+    {
         $view = $this->viewFolder . '.' . ltrim($view, $this->viewFolder);
         return $this->view->render($view, $params);
     }
 
-    /**
-     * 操作成功响应
-     *
-     * @param $message
-     * @param $url
-     * @return mixed
-     */
-    public function resolve($message, $url) {
-        return responseResolve($message, $url);
-    }
-
-    /**
-     * 操作失败响应
-     *
-     * @param $message
-     * @param $url
-     * @return mixed
-     */
-    public function reject($message, $url) {
-        return responseReject($message, $url);
-    }
 }

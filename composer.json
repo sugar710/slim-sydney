@@ -1,14 +1,14 @@
 {
-    "name": "slim/slim-skeleton",
+    "name": "slim/slim-sydney",
     "description": "A Slim Framework skeleton application for rapid development",
     "keywords": ["microframework", "rest", "router", "psr7"],
-    "homepage": "http://github.com/slimphp/Slim-Skeleton",
+    "homepage": "https://github.com/Sydney710/slim-sydney",
     "license": "MIT",
     "authors": [
         {
-            "name": "Josh Lockhart",
-            "email": "info@joshlockhart.com",
-            "homepage": "http://www.joshlockhart.com/"
+            "name": "Sydney710",
+            "email": "hxtgirq710@qq.com",
+            "homepage": "http://www.sydney710.cn/"
         }
     ],
     "require": {

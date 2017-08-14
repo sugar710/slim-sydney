@@ -76,7 +76,7 @@
                                     <td>{{ $item->updated_at }}</td>
                                 </tr>
                             @endforeach
-                            @if(empty($list->size))
+                            @if($list->isEmpty())
                                 <tr>
                                     <td class="text-center" colspan="5">
                                         暂无数据

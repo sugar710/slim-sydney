@@ -22,7 +22,8 @@
                         <div class="box-actions">
                             <div class="btn-group pull-left" style="margin-right:10px;">
                                 <button type="button" class="btn btn-default btn-sm">操作</button>
-                                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                        data-toggle="dropdown">
                                     <span class="caret"></span>
                                     <span class="sr-only">Toggle Dropdown</span>
                                 </button>
@@ -31,18 +32,22 @@
                                     <li class="divider"></li>
                                     <li><a href="javascript:;" data-action="clear-all">全部清选</a></li>
                                     <li class="divider"></li>
-                                    <li><a href="javascript:;" data-href="{{ admUrl('/role/delete') }}" data-action="batch-del">批量删除</a></li>
+                                    <li><a href="javascript:;" data-href="{{ admUrl('/role/delete') }}"
+                                           data-action="batch-del">批量删除</a></li>
                                 </ul>
                             </div>
-                            <a href="{{ admUrl('/role/data') }}" class="btn btn-default btn-sm pull-left" style="margin-right:10px;">创建</a>
+                            <a href="{{ admUrl('/role/data') }}" class="btn btn-default btn-sm pull-left"
+                               style="margin-right:10px;">创建</a>
                         </div>
                         <div class="box-tools clearfix">
                             <form action="{{ admUrl('/role') }}" method="GET">
                                 <div class="input-group input-group-sm" style="width: 180px;">
-                                    <input type="text" name="keyword" value="{{ $req["keyword"] or '' }}" class="form-control pull-right" placeholder="Search">
+                                    <input type="text" name="keyword" value="{{ $req["keyword"] or '' }}"
+                                           class="form-control pull-right" placeholder="Search">
 
                                     <div class="input-group-btn">
-                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>
+                                        </button>
                                         <a href="{{ admUrl('/role') }}" class="btn btn-default">全部</a>
                                     </div>
                                 </div>
@@ -60,16 +65,24 @@
                                 <th>更新时间</th>
                             </tr>
                             @foreach($list as $item)
-                            <tr data-id="{{ $item->id }}">
-                                <td>{{ $item->id }}</td>
-                                <td>
-                                    <a href="{{ admUrl('/role/data?id=' . $item->id) }}" title="编辑角色">{{ $item->name or '未命名' }}</a>
-                                </td>
-                                <td>{{ $item->slug }}</td>
-                                <td>{{ $item->created_at }}</td>
-                                <td>{{ $item->updated_at }}</td>
-                            </tr>
+                                <tr data-id="{{ $item->id }}">
+                                    <td>{{ $item->id }}</td>
+                                    <td>
+                                        <a href="{{ admUrl('/role/data?id=' . $item->id) }}"
+                                           title="编辑角色">{{ $item->name or '未命名' }}</a>
+                                    </td>
+                                    <td>{{ $item->slug }}</td>
+                                    <td>{{ $item->created_at }}</td>
+                                    <td>{{ $item->updated_at }}</td>
+                                </tr>
                             @endforeach
+                            @if(empty($list->size))
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    暂无数据
+                                </td>
+                            </tr>
+                            @endif
                         </table>
                     </div>
                     <!-- /.box-body -->

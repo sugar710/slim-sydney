@@ -34,7 +34,7 @@ class BaseController extends Controller
      */
     public function render($view, array $params = [])
     {
-        $view = $this->viewFolder . '.' . ltrim($view, $this->viewFolder);
+        $view = strstr($view, $this->viewFolder) === 0 ? $view : $this->viewFolder . '.' . $view;
         return $this->view->render($view, $params);
     }
 

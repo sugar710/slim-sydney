@@ -92,4 +92,13 @@ class AdminRoleController extends BaseController implements DataProcessInterface
         }
     }
 
+    /**
+     * 角色列表地址
+     *
+     * @return string
+     */
+    protected function redirectToList() {
+        return $this->router->pathFor('admin.role');
+    }
+
 }

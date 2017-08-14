@@ -6,6 +6,7 @@ use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\HomeController;
 use App\Controllers\InstallController;
 use App\Controllers\Admin\AdminPermissionController;
+use App\Controllers\Admin\AdminRoleController;
 use App\Middleware\VerifyAdminLoginMiddleware;
 
 $app->get('/admin/login', AuthController::class . ':login');
@@ -22,6 +23,12 @@ $app->group("/admin", function() use ($app) {
     $app->get('/permission/data', AdminPermissionController::class . ':data');
     $app->get('/permission/delete', AdminPermissionController::class . ':doDelete');
     $app->post('/permission', AdminPermissionController::class . ':save');
+
+    //角色管理
+    $app->get('/role', AdminRoleController::class . ':index')->setName("admin.role");
+    $app->get('/role/data', AdminRoleController::class . ':data');
+    $app->get('/role/delete', AdminRoleController::class . ':doDelete');
+    $app->post('/role', AdminRoleController::class . ':save');
 
 })->add(VerifyAdminLoginMiddleware::class);
 

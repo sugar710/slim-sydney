@@ -52,6 +52,12 @@
                             权限管理
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ admUrl('/role') }}">
+                            <i class="fa fa-circle-o"></i>
+                            角色管理
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="treeview">

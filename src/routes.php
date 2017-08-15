@@ -8,14 +8,15 @@ use App\Controllers\Admin\AdminPermissionController;
 use App\Controllers\Admin\AdminRoleController;
 use App\Middleware\VerifyAdminLoginMiddleware;
 use App\Middleware\VerifyDomainMiddleware;
+use App\Middleware\VerifyInstallMiddleware;
 
 $adminDomain = env("ADMIN_DOMAIN", '');
 
-$app->get('/admin', function(Request $req, Response $res) {
+$app->get('/admin', function (Request $req, Response $res) {
     return $res->withRedirect("/admin/home", 301);
 });
 
-$app->group("/admin", function() use ($app) {
+$app->group("/admin", function () use ($app) {
 
     $app->get('/login', AuthController::class . ':login');
 
@@ -23,7 +24,7 @@ $app->group("/admin", function() use ($app) {
 
     $app->get('/logout', AuthController::class . ':logout');
 
-    $app->group("", function() use ($app) {
+    $app->group("", function () use ($app) {
         $app->get("/home", HomeController::class . ':home');
 
         //权限管理
@@ -40,6 +41,6 @@ $app->group("/admin", function() use ($app) {
 
     })->add(VerifyAdminLoginMiddleware::class);
 
-})->add(new VerifyDomainMiddleware($adminDomain));
+})->add(new VerifyInstallMiddleware(true))->add(new VerifyDomainMiddleware($adminDomain));
 
 require __DIR__ . '/Routers/install.php';

@@ -3,6 +3,7 @@
 use App\Controllers\InstallController;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use App\Middleware\VerifyInstallMiddleware;
 
 //基础数据安装
 
@@ -32,4 +33,4 @@ $app->group("/install", function() use ($app){
 
     $app->get("/ready/go", InstallController::class . ':doInstall');
 
-});
+})->add(new VerifyInstallMiddleware(false));

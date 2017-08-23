@@ -47,9 +47,9 @@
                 </a>
                 <ul class="treeview-menu">
                     <li>
-                        <a href="{{ admUrl('/permission') }}">
+                        <a href="{{ admUrl('/router') }}">
                             <i class="fa fa-circle-o"></i>
-                            权限管理
+                            路由管理
                         </a>
                     </li>
                     <li>

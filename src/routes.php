@@ -6,6 +6,7 @@ use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\HomeController;
 use App\Controllers\Admin\AdminPermissionController;
 use App\Controllers\Admin\AdminRoleController;
+use App\Controllers\Admin\AdminRouterController;
 use App\Middleware\VerifyAdminLoginMiddleware;
 use App\Middleware\VerifyDomainMiddleware;
 use App\Middleware\VerifyInstallMiddleware;
@@ -38,6 +39,12 @@ $app->group("/admin", function () use ($app) {
         $app->get('/role/data', AdminRoleController::class . ':data');
         $app->get('/role/delete', AdminRoleController::class . ':doDelete');
         $app->post('/role', AdminRoleController::class . ':save');
+
+        //路由表管理
+        $app->get('/router', AdminRouterController::class . ':index')->setName('admin.router');
+        $app->get('/router/data', AdminRouterController::class . ':data');
+        $app->get('/router/delete', AdminRouterController::class . ':doDelete');
+        $app->post('/router', AdminRouterController::class . ':save');
 
     })->add(VerifyAdminLoginMiddleware::class);
 

@@ -36,12 +36,48 @@ function url($path)
 /**
  * 管理后台访问地址生成
  *
- * @param $path
+ * @param string $path
+ * @param array $query 查询参数
  * @return string
  */
-function admUrl($path) {
+function admUrl($path, $query = []) {
     $admPath = make("settings")["admin"]["path"] ?: "admin";
-    return '/' .$admPath . '/' . ltrim($path, '/');
+    $queryString = "";
+    if(!empty($query)) {
+        $q = [];
+        if(!is_array($query)) {
+            parse_str($query,$q);
+        } else {
+            $q = $query;
+        }
+        $queryString = "?" . http_build_query($q);
+    }
+    return '/' .$admPath . '/' . ltrim($path, '/') . $queryString;
+}
+
+/**
+ * 获取子孙数组
+ *
+ * @param array $arr 数组源
+ * @param int $id
+ * @param int $lev
+ * @param string $pidKey
+ * @return array
+ */
+function subtree($arr, $id = 0, $lev = 0, $pidKey = 'parent_id')
+{
+    $result = array();
+    foreach ($arr as $item) {
+        if(!is_array($item)) {
+            $item = (array) $item;
+        }
+        if ($item[$pidKey] == $id) {
+            $item['lev'] = $lev;
+            $result[] = $item;
+            $result = array_merge($result, subtree($arr, $item['id'], $lev + 1, $pidKey));
+        }
+    }
+    return $result;
 }
 
 if(!function_exists('env')) {

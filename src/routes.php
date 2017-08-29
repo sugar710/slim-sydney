@@ -4,9 +4,9 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\HomeController;
-use App\Controllers\Admin\AdminPermissionController;
 use App\Controllers\Admin\AdminRoleController;
 use App\Controllers\Admin\AdminRouterController;
+use App\Controllers\Admin\AdminMenuController;
 use App\Middleware\VerifyAdminLoginMiddleware;
 use App\Middleware\VerifyDomainMiddleware;
 use App\Middleware\VerifyInstallMiddleware;
@@ -45,6 +45,12 @@ $app->group("/admin", function () use ($app) {
         $app->get('/router/data', AdminRouterController::class . ':data');
         $app->get('/router/delete', AdminRouterController::class . ':doDelete');
         $app->post('/router', AdminRouterController::class . ':save');
+
+        //菜单管理
+        $app->get('/menu', AdminMenuController::class . ':index')->setName('admin.menu');
+        $app->get('/menu/data', AdminMenuController::class . ":data");
+        $app->get('/menu/delete', AdminMenuController::class . ':doDelete');
+        $app->post('/menu', AdminMenuController::class . ':save');
 
     })->add(VerifyAdminLoginMiddleware::class);
 

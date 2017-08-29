@@ -58,6 +58,12 @@
                             角色管理
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ admUrl('/menu') }}">
+                            <i class="fa fa-circle-o"></i>
+                            菜单管理
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="treeview">

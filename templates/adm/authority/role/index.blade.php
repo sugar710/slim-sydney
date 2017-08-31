@@ -38,12 +38,14 @@
                             </div>
                             <a href="{{ admUrl('/role/data') }}" class="btn btn-default btn-sm pull-left"
                                style="margin-right:10px;">创建</a>
+                            <a data-href="{{ admUrl('/role/delete') }}" class="btn btn-danger btn-sm pull-left"
+                               data-action="batch-del">删除</a>
                         </div>
                         <div class="box-tools clearfix">
                             <form action="{{ admUrl('/role') }}" method="GET">
                                 <div class="input-group input-group-sm" style="width: 180px;">
                                     <input type="text" name="keyword" value="{{ $req["keyword"] or '' }}"
-                                           class="form-control pull-right" placeholder="Search">
+                                           class="form-control pull-right" placeholder="搜索">
 
                                     <div class="input-group-btn">
                                         <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>
@@ -77,11 +79,11 @@
                                 </tr>
                             @endforeach
                             @if($list->isEmpty())
-                            <tr>
-                                <td colspan="5" class="text-center">
-                                    暂无数据
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        暂无数据
+                                    </td>
+                                </tr>
                             @endif
                         </table>
                     </div>

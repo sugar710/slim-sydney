@@ -40,19 +40,20 @@ function url($path)
  * @param array $query 查询参数
  * @return string
  */
-function admUrl($path, $query = []) {
+function admUrl($path, $query = [])
+{
     $admPath = make("settings")["admin"]["path"] ?: "admin";
     $queryString = "";
-    if(!empty($query)) {
+    if (!empty($query)) {
         $q = [];
-        if(!is_array($query)) {
-            parse_str($query,$q);
+        if (is_string($query)) {
+            parse_str($query, $q);
         } else {
             $q = $query;
         }
         $queryString = "?" . http_build_query($q);
     }
-    return '/' .$admPath . '/' . ltrim($path, '/') . $queryString;
+    return '/' . $admPath . '/' . ltrim($path, '/') . $queryString;
 }
 
 /**
@@ -68,8 +69,8 @@ function subtree($arr, $id = 0, $lev = 0, $pidKey = 'parent_id')
 {
     $result = array();
     foreach ($arr as $item) {
-        if(!is_array($item)) {
-            $item = (array) $item;
+        if (!is_array($item)) {
+            $item = (array)$item;
         }
         if ($item[$pidKey] == $id) {
             $item['lev'] = $lev;
@@ -80,7 +81,33 @@ function subtree($arr, $id = 0, $lev = 0, $pidKey = 'parent_id')
     return $result;
 }
 
-if(!function_exists('env')) {
+/**
+ * 将数组格式化为多组数组
+ *
+ * @param array $arr 原始数组
+ * @param int $id
+ * @param string $relIndex 关联索引
+ * @return array
+ */
+function levelArr(array $arr, $id = 0, $relIndex = 'parent_id')
+{
+    $result = [];
+    foreach ($arr as $item) {
+        if (!is_array($item)) {
+            $item = (array)$item;
+        }
+        if ($item[$relIndex] == $id) {
+            $item["items"] = levelArr($arr, $item["id"], $relIndex);
+            if (empty($item["items"])) {
+                unset($item["items"]);
+            }
+            $result[] = $item;
+        }
+    }
+    return $result;
+}
+
+if (!function_exists('env')) {
     /**
      * 获取ENV配置项
      *
@@ -88,19 +115,22 @@ if(!function_exists('env')) {
      * @param string $default
      * @return string $value
      */
-    function env($key, $default = '') {
+    function env($key, $default = '')
+    {
         $value = getenv($key);
         return $value === false ? $default : $value;
     }
 }
 
-function responseReject($message, $url) {
+function responseReject($message, $url)
+{
     flashReject(make("request")->getParams());
     flash("action.error", $message);
     return make("response")->withRedirect($url);
 }
 
-function responseResolve($message, $url) {
+function responseResolve($message, $url)
+{
     flash("action.success", $message);
     return make("response")->withRedirect($url);
 }
@@ -110,7 +140,8 @@ function responseResolve($message, $url) {
  *
  * @param $params
  */
-function flashReject($params) {
+function flashReject($params)
+{
     $params = $params ?: [];
     flash("req.is_back", "T");
     flash("req.data", json_encode($params));
@@ -123,12 +154,13 @@ function flashReject($params) {
  * @param null $default
  * @return null
  */
-function old($key, $default = null) {
+function old($key, $default = null)
+{
     $is_back = flash("req.is_back");
-    if(empty($key) || $is_back != "T") {
+    if (empty($key) || $is_back != "T") {
         return $default;
     }
-    $data = json_decode(flash("req.data") ?: "[]",true);
+    $data = json_decode(flash("req.data") ?: "[]", true);
     return isset($data[$key]) ? $data[$key] : $default;
 }
 
@@ -139,9 +171,10 @@ function old($key, $default = null) {
  * @param null $msg
  * @return mixed
  */
-function flash($key, $msg = null){
+function flash($key, $msg = null)
+{
     $flash = make("flash");
-    if(is_null($msg)) {
+    if (is_null($msg)) {
         return array_first($flash->getMessage($key));
     }
     return $flash->addMessage($key, $msg);
@@ -154,12 +187,13 @@ function flash($key, $msg = null){
  * @param null $default
  * @return bool|mixed
  */
-function session($key, $default = null) {
+function session($key, $default = null)
+{
     $session = make("session");
-    if(is_string($key)) {
+    if (is_string($key)) {
         return $session->get($key, $default);
-    } else if(is_array($key)) {
-        foreach($key as $sk => $sv) {
+    } else if (is_array($key)) {
+        foreach ($key as $sk => $sv) {
             $session->set($sk, $sv);
         }
         return true;
@@ -172,8 +206,9 @@ function session($key, $default = null) {
  * @param null $name
  * @return \App\Container|mixed|null|static
  */
-function make($name = null) {
-    if(is_null($name)) {
+function make($name = null)
+{
+    if (is_null($name)) {
         return container();
     }
     return container()->get($name);
@@ -184,6 +219,7 @@ function make($name = null) {
  *
  * @return \App\Container|null|static
  */
-function container() {
+function container()
+{
     return \App\Container::getInstance();
 }

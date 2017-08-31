@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\Controller;
+use App\Models\AdminMenu;
 use Slim\Container;
 
 /**
@@ -20,9 +21,19 @@ class BaseController extends Controller
     public function __construct(Container $container)
     {
         parent::__construct($container);
-        $this->adminUser = $this->session->get("admUser");
-        $this->view->share("adminUser", $this->adminUser);
         $this->db;
+        $this->adminUser = $this->session->get("admUser");
+        $this->adminShare();
+    }
+
+    /**
+     * 管理后台公用模板数据
+     */
+    private function adminShare() {
+        $adminMenus = AdminMenu::levelMenu();
+        $this->view->share("adminUser", $this->adminUser);
+        $this->view->share("adminMenus", $adminMenus);
+        $this->view->share("adminPath", $this->req->getUri()->getPath());
     }
 
     /**

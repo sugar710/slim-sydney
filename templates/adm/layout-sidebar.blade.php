@@ -14,7 +14,7 @@
         <!-- search form -->
         <form action="#" method="get" class="sidebar-form">
             <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search...">
+                <input type="text" name="q" class="form-control" placeholder="搜索">
                 <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
@@ -37,36 +37,9 @@
                     <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
                 </ul>
             </li>
-            <li class="treeview">
-                <a href="javascript:;">
-                    <i class="fa fa-files-o"></i>
-                    <span>权限管理</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li>
-                        <a href="{{ admUrl('/router') }}">
-                            <i class="fa fa-circle-o"></i>
-                            路由管理
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ admUrl('/role') }}">
-                            <i class="fa fa-circle-o"></i>
-                            角色管理
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ admUrl('/menu') }}">
-                            <i class="fa fa-circle-o"></i>
-                            菜单管理
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="treeview">
+            @each('adm.layout-sidebar-item', $adminMenus, 'menu')
+
+            {{--<li class="treeview">
                 <a href="#">
                     <i class="fa fa-files-o"></i>
                     <span>Layout Options</span>
@@ -222,7 +195,7 @@
             <li class="header">LABELS</li>
             <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
             <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>Warning</span></a></li>
-            <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Information</span></a></li>
+            <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Information</span></a></li>--}}
         </ul>
     </section>
     <!-- /.sidebar -->

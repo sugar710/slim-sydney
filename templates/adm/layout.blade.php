@@ -42,7 +42,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body class="hold-transition skin-blue sidebar-mini" data-toastr-success="{{ flash('action.success') }}" data-toastr-error="{{ flash('action.error') }}">
+<body class="hold-transition skin-blue sidebar-mini fixed" data-toastr-success="{{ flash('action.success') }}" data-toastr-error="{{ flash('action.error') }}">
 <div class="wrapper">
 
 @include("adm.layout-header")

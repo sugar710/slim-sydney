@@ -1,11 +1,16 @@
+body {
+    font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, WenQuanYi Micro Hei, Arial, sans-serif
+}
+
 .install-box {
-    width:500px;
+    width: 500px;
 }
 
 .install-box {
     width: 500px;
     margin: 7% auto;
 }
+
 @media (max-width: 768px) {
     .install-box {
         width: 90%;
@@ -13,12 +18,13 @@
     }
 }
 
-.install-box-body{
+.install-box-body {
     background: #fff;
     padding: 20px;
     border-top: 0;
     color: #666;
 }
+
 .install-box-msg {
     margin: 0;
     text-align: center;
@@ -26,30 +32,33 @@
 }
 
 .install-agreement-box {
-    padding:15px;
-    font-size:13px;
-    line-height:24px;
+    padding: 15px;
+    font-size: 13px;
+    line-height: 24px;
 }
 
 .install-box .install-message {
-    height:240px;
+    height: 240px;
     text-indent: 15px;
-    font-size:13px;
-    margin-bottom:20px;
-    overflow:auto;
+    font-size: 13px;
+    margin-bottom: 20px;
+    overflow: auto;
 }
+
 .install-message span {
-    float:right;
-    margin-right:20px;
+    float: right;
+    margin-right: 20px;
 }
 
 .box-actions ul.dropdown-menu {
-    font-size:13px;
+    font-size: 13px;
 }
+
 .box-actions ul.dropdown-menu .divider {
     /*margin:5px 0;*/
-    margin:0;
+    margin: 0;
 }
+
 .box-actions ul.dropdown-menu a {
-    padding:5px 20px;
+    padding: 5px 20px;
 }

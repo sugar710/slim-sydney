@@ -38,6 +38,8 @@
                             </div>
                             <a href="{{ admUrl('/router/data') }}" class="btn btn-default btn-sm pull-left"
                                style="margin-right:10px;">创建</a>
+                            <a data-href="{{ admUrl('/router/delete') }}" class="btn btn-danger btn-sm pull-left"
+                               data-action="batch-del">删除</a>
                         </div>
                         <div class="box-tools clearfix">
                             <form action="{{ admUrl('/router') }}" method="GET">

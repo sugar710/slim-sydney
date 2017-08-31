@@ -38,21 +38,9 @@
                             </div>
                             <a href="{{ admUrl('/menu/data') }}" class="btn btn-default btn-sm pull-left"
                                style="margin-right:10px;">创建</a>
+                            <a data-href="{{ admUrl('/menu/delete') }}" class="btn btn-danger btn-sm pull-left"
+                               data-action="batch-del">删除</a>
                         </div>
-                        {{--<div class="box-tools clearfix">
-                            <form action="{{ admUrl('/menu') }}" method="GET">
-                                <div class="input-group input-group-sm" style="width: 180px;">
-                                    <input type="text" name="keyword" value="{{ $req["keyword"] or '' }}"
-                                           class="form-control pull-right" placeholder="Search">
-
-                                    <div class="input-group-btn">
-                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>
-                                        </button>
-                                        <a href="{{ admUrl('/menu') }}" class="btn btn-default">全部</a>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>--}}
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body table-responsive no-padding">
@@ -92,7 +80,6 @@
                     <!-- /.box-body -->
                 </div>
                 <!-- /.box -->
-
             </div>
         </div>
     </section>

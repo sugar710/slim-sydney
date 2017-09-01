@@ -51,7 +51,9 @@ $app->group("/admin", function () use ($app) {
         $app->get('/user', AdminUserController::class . ':index')->setName('admin.user');
         $app->get('/user/data', AdminUserController::class . ':data');
         $app->get('/user/delete', AdminUserController::class . ':doDelete');
+        $app->get('/user/switchLock', AdminUserController::class . ':doLock');
         $app->post('/user', AdminUserController::class . ':save');
+
 
     })->add(VerifyAdminLoginMiddleware::class);
 

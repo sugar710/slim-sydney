@@ -298,7 +298,17 @@
 <script src="{{ asset('/slimLte/app.js') }}"></script>
 <script type="text/javascript">
     $(function(){
+        var adminPath = "{{ $adminPath }}";
+
         $(".select2").select2();
+
+        $(".sidebar-menu a").each(function(){
+            var link = $(this),url = link.attr("href");
+            $(".slidebar li").removeClass("active");
+            if(url.indexOf(adminPath) !== -1) {
+                link.parents("li").addClass("active");
+            }
+        });
     });
 </script>
 @yield('js')

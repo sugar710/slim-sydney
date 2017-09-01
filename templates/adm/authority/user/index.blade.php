@@ -4,12 +4,12 @@
     <section class="content-header">
         <h1>
             权限管理
-            <small>路由管理</small>
+            <small>用户管理</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="{{ admUrl('/') }}"><i class="fa fa-dashboard"></i> 首页</a></li>
-            <li><a href="javascript:;">路由管理</a></li>
-            <li class="active">路由列表</li>
+            <li><a href="javascript:;">用户管理</a></li>
+            <li class="active">用户列表</li>
         </ol>
     </section>
     <section class="content">
@@ -36,21 +36,22 @@
                                            data-action="batch-del">批量删除</a></li>
                                 </ul>
                             </div>
-                            <a href="{{ admUrl('/router/data') }}" class="btn btn-default btn-sm pull-left"
+                            <a href="{{ admUrl('/user/data') }}" class="btn btn-default btn-sm pull-left"
                                style="margin-right:10px;">创建</a>
-                            <a data-href="{{ admUrl('/router/delete') }}" class="btn btn-danger btn-sm pull-left"
+                            <a data-href="{{ admUrl('/user/delete') }}" class="btn btn-danger btn-sm pull-left"
                                data-action="batch-del">删除</a>
                         </div>
                         <div class="box-tools clearfix">
-                            <form action="{{ admUrl('/router') }}" method="GET">
+                            <form action="{{ admUrl('/user') }}" method="GET">
                                 <div class="input-group input-group-sm" style="width: 180px;">
                                     <input type="text" name="keyword" value="{{ $req["keyword"] or '' }}"
                                            class="form-control pull-right" placeholder="搜索">
 
                                     <div class="input-group-btn">
-                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>
+                                        <button type="submit" class="btn btn-default">
+                                            <i class="fa fa-search"></i>
                                         </button>
-                                        <a href="{{ admUrl('/router') }}" class="btn btn-default">全部</a>
+                                        <a href="{{ admUrl('/user') }}" class="btn btn-default">全部</a>
                                     </div>
                                 </div>
                             </form>
@@ -61,13 +62,11 @@
                         <table class="table table-hover">
                             <tr>
                                 <th>ID</th>
-                                <th>路由名称</th>
-                                <th>路由标记</th>
-                                <th>请求方法</th>
-                                <th>路由地址</th>
-                                <th>查询参数</th>
-                                <th>启用状态</th>
-                                <th>排序</th>
+                                <th>账号</th>
+                                <th>邮箱</th>
+                                <th>昵称</th>
+                                <th>角色</th>
+                                <th>状态</th>
                                 <th>创建时间</th>
                                 <th>更新时间</th>
                             </tr>
@@ -75,28 +74,38 @@
                                 <tr data-id="{{ $item->id }}">
                                     <td>{{ $item->id }}</td>
                                     <td>
-                                        <a href="{{ admUrl('/router/data?id=' . $item->id) }}"
-                                           title="编辑路由">{{ $item->name or '未命名' }}</a>
+                                        {{ $item->username }}
                                     </td>
-                                    <td>{{ $item->slug }}</td>
-                                    <td>{{ $item->method }}</td>
-                                    <td>{{ $item->path }}</td>
-                                    <td>{{ $item->query }}</td>
                                     <td>
-                                        @if($item->status == 'T')
-                                            <span class="label label-success">启用</span>
+                                        {{ $item->email }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ admUrl('/user/data?id=' . $item->id) }}"
+                                           title="编辑用户">{{ $item->name or '未命名' }}</a>
+                                    </td>
+                                    <td>
+                                        @foreach($item->roles as $role)
+                                            <span class="label label-info">{{ $role->name }}</span>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @if($item->is_lock == 'F')
+                                            <a href="{{ admUrl('user/switchLock', ['id' => $item->id]) }}" title="锁定用户">
+                                                <span class="label label-success">正常</span>
+                                            </a>
                                         @else
-                                            <span class="label label-danger">禁用</span>
+                                            <a href="{{ admUrl('user/switchLock', ['id' => $item->id]) }}" title="解锁成功">
+                                                <span class="label label-danger">锁定</span>
+                                            </a>
                                         @endif
                                     </td>
-                                    <td>{{ $item->sort }}</td>
                                     <td>{{ $item->created_at }}</td>
                                     <td>{{ $item->updated_at }}</td>
                                 </tr>
                             @endforeach
                             @if($list->isEmpty())
                                 <tr>
-                                    <td colspan="10" class="text-center">
+                                    <td colspan="5" class="text-center">
                                         暂无数据
                                     </td>
                                 </tr>

@@ -33,4 +33,4 @@ $app->group("/install", function() use ($app){
 
     $app->get("/ready/go", InstallController::class . ':doInstall');
 
-})->add(new VerifyInstallMiddleware(false));
+})->add(new VerifyInstallMiddleware(VerifyInstallMiddleware::UNINSTALL));

@@ -18,10 +18,13 @@ class BaseController extends Controller
 
     protected $viewFolder = 'adm';
 
+    protected $now = '';
+
     public function __construct(Container $container)
     {
         parent::__construct($container);
         $this->db;
+        $this->now = date('Y-m-d H:i:s');
         $this->adminUser = $this->session->get("admUser");
         $this->adminShare();
     }

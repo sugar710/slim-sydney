@@ -44,7 +44,7 @@ trait DataProcessTrait
     {
         $this->validateCreate($req);
 
-        $data = $this->filterField($req->getParams());
+        $data = $this->fieldFilter($req->getParams());
         $now = date("Y-m-d H:i:s");
         $data = array_merge($data, ["created_at" => $now, "updated_at" => $now]);
         try {
@@ -75,7 +75,7 @@ trait DataProcessTrait
 
         $this->validateUpdate($req);
 
-        $data = $this->filterField($req->getParams());
+        $data = $this->fieldFilter($req->getParams());
         $data = array_merge($data, ["updated_at" => date("Y-m-d H:i:s")]);
 
         try {
@@ -128,7 +128,7 @@ trait DataProcessTrait
      * @param array $fields
      * @return array
      */
-    protected function filterField(array $fields = [])
+    protected function fieldFilter(array $fields = [])
     {
         $columns = $this->schema->getColumnListing($this->dataTable);
         $fields = array_filter($fields, function ($field) use ($columns) {

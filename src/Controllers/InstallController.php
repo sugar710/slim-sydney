@@ -7,14 +7,16 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Webmozart\Assert\Assert;
 
-class InstallController extends Controller {
+class InstallController extends Controller
+{
 
     /**
      * 欢迎页面
      *
      * @return string
      */
-    public function welcome() {
+    public function welcome()
+    {
         return $this->view->render("install.welcome");
     }
 
@@ -24,9 +26,10 @@ class InstallController extends Controller {
      * @param Request $req
      * @return Response
      */
-    public function agreeVerify(Request $req) {
+    public function agreeVerify(Request $req)
+    {
         $agree = $req->getParam("agreement", "F");
-        if($agree != "T") {
+        if ($agree != "T") {
             return $this->jsonTip(0, "请先阅读并同意协议");
         }
         $this->session->set("install.agree", "T");
@@ -36,13 +39,14 @@ class InstallController extends Controller {
     /**
      * 环境检测
      */
-    public function env() {
+    public function env()
+    {
         $data = [];
         $this->session->set("install.env", true);
-        $data["base"] = value(function(){
+        $data["base"] = value(function () {
             $list = [
                 "os" => [
-                    "name" =>"操作系统",
+                    "name" => "操作系统",
                     "condition" => "不限制",
                     "current" => PHP_OS,
                     "result" => "T"
@@ -61,13 +65,13 @@ class InstallController extends Controller {
                 ],
             ];
 
-            if(version_compare($list["php"]["condition"], PHP_VERSION) >= 0) {
-               $list["php"]["result"] = "F";
-               $this->session->set("install.env", false);
+            if (version_compare($list["php"]["condition"], PHP_VERSION) >= 0) {
+                $list["php"]["result"] = "F";
+                $this->session->set("install.env", false);
             }
 
             $tmp = function_exists("gd_info") ? gd_info() : array();
-            if(empty($tmp["GD Version"])) {
+            if (empty($tmp["GD Version"])) {
                 $list["gd"]["current"] = "未安装";
                 $this->session->set("install.env", false);
             } else {
@@ -84,7 +88,8 @@ class InstallController extends Controller {
      *
      * return Response
      */
-    public function database() {
+    public function database()
+    {
         $data = [];
         return $this->view->render("install.database", $data);
     }
@@ -96,7 +101,8 @@ class InstallController extends Controller {
      * @param Response $res
      * @return Response
      */
-    public function databaseVerify(Request $req, Response $res) {
+    public function databaseVerify(Request $req, Response $res)
+    {
         $dbHost = $req->getParam("dbhost", "");
         $dbName = $req->getParam("dbname", "");
         $dbUser = $req->getParam("dbuser", "");
@@ -107,7 +113,7 @@ class InstallController extends Controller {
             Assert::notEmpty($dbUser, "数据库用户不能为空");
             Assert::notEmpty($dbPassword, "数据库密码不能为空");
             new \PDO("mysql:dbname={$dbName};host={$dbHost}", $dbUser, $dbPassword);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->jsonTip(0, $e->getMessage());
         }
         $this->session->set("install.database", [
@@ -124,7 +130,8 @@ class InstallController extends Controller {
      *
      * @return string
      */
-    public function accountConf() {
+    public function accountConf()
+    {
         return $this->view->render("install.account");
     }
 
@@ -134,7 +141,8 @@ class InstallController extends Controller {
      * @param Request $req
      * @return Response
      */
-    public function accountVerify(Request $req) {
+    public function accountVerify(Request $req)
+    {
         $adminName = $req->getParam("admin_name", "");
         $adminAccount = $req->getParam("admin_username", "");
         $adminPassword = $req->getParam("admin_password", "");
@@ -144,7 +152,7 @@ class InstallController extends Controller {
             Assert::notEmpty($adminPassword, "管理员密码不能为空");
             Assert::notEmpty($adminName, "管理员名称不能为空");
             Assert::notEmpty($adminEmail, "邮箱地址不能为空");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->jsonTip(0, $e->getMessage());
         }
         $this->session->set("install.admin", [
@@ -159,11 +167,12 @@ class InstallController extends Controller {
     /**
      * 执行安装
      */
-    public function doInstall() {
+    public function doInstall()
+    {
         echo $this->view->render("install.installing");
         $this->flush();
         $this->createTables();
-        $this->createAccount();
+        $this->createData();
         $this->createEnvFile();
         touch('./install.lock');
     }
@@ -171,24 +180,25 @@ class InstallController extends Controller {
     /**
      * 创建表结构
      */
-    private function createTables() {
+    private function createTables()
+    {
         $this->showMsg("开始创建表结构");
 
         $pdo = $this->getPdo();
         $sqls = $this->getSqlList();
-        foreach($sqls as $sql ) {
+        foreach ($sqls as $sql) {
             $result = true;
             try {
                 $pdo->exec($sql);
                 $this->logger->info("执行SQL:" . $sql);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $errMsg = $e->getMessage();
                 $result = false;
             }
-            if(strpos($sql, "CREATE TABLE") === 0) {
+            if (strpos($sql, "CREATE TABLE") === 0) {
                 $name = preg_replace("/CREATE TABLE (IF NOT EXISTS)? `(\w+)` .*/s", "\\2", $sql);
                 $this->showMsg("创建数据表 " . $name, $result ? "ok" : "error");
-                if(isset($errMsg)) {
+                if (isset($errMsg)) {
                     $this->showMsg("错误消息 " . $errMsg);
                 }
             }
@@ -201,7 +211,8 @@ class InstallController extends Controller {
      *
      * @return bool
      */
-    private function createAccount() {
+    private function createAccount()
+    {
         $now = date("Y-m-d H:i:s");
         $pdo = $this->getPdo();
         $config = $this->session->get("install.admin");
@@ -215,16 +226,40 @@ class InstallController extends Controller {
         $sth->bindValue(":updated_at", $now);
         $result = $sth->execute();
         $this->showMsg("创建管理员账号", $result ? "ok" : "error");
-        if(!$result) {
+        if (!$result) {
             $this->logger->info("创建管理员错误：" . print_r($sth->errorInfo(), true));
         }
         return $result;
     }
 
     /**
+     * 创建超级管理员
+     */
+    private function createData()
+    {
+        $this->createAccount();
+
+        $this->showMsg("数据初始化开始");
+
+        $pdo = $this->getPdo();
+        $sqls = $this->getSqlList("../doc/slimLte-data.sql");
+        foreach ($sqls as $sql) {
+            try {
+                $pdo->exec($sql);
+                $this->logger->info("执行SQL:" . $sql);
+            } catch (\Exception $e) {
+                $this->logger->info($sql . " >>> " . $e->getMessage());
+            }
+        }
+        $this->showMsg("数据初始化结束");
+    }
+
+
+    /**
      * 创建.env配置文件
      */
-    private function createEnvFile() {
+    private function createEnvFile()
+    {
         $config = $this->session->get("install.database");
         $file = "../config.env";
         file_put_contents($file, "DB_HOST=" . $config["host"] . "\n", FILE_APPEND);
@@ -239,12 +274,14 @@ class InstallController extends Controller {
      * @param $msg
      * @param string $status
      */
-    private function showMsg($msg, $status = "") {
+    private function showMsg($msg, $status = "")
+    {
         echo "<script type=\"text/javascript\">showMsg(\"{$msg}\", \"{$status}\")</script>";
         $this->flush();
     }
 
-    private function flush() {
+    private function flush()
+    {
         echo str_repeat(" ", 4096);
         ob_flush();
         flush();
@@ -255,7 +292,8 @@ class InstallController extends Controller {
      *
      * @return \PDO
      */
-    private function getPdo() {
+    private function getPdo()
+    {
         $config = $this->session->get("install.database");
         $dbHost = $config["host"];
         $dbName = $config["name"];
@@ -272,13 +310,14 @@ class InstallController extends Controller {
      * @param string $sqlFile sql文件地址
      * @return array
      */
-    private function getSqlList($sqlFile = "../doc/slimLte.sql") {
+    private function getSqlList($sqlFile = "../doc/slimLte.sql")
+    {
         $sqlContent = file_get_contents($sqlFile);
         $sqlContent = str_replace("`sydney`.", "", $sqlContent);
         $sqlContent = str_replace("\r", "\n", $sqlContent);
         $sqls = explode("\n", $sqlContent);
-        $sqls = array_filter($sqls, function($item) {
-            if(empty($item)) {
+        $sqls = array_filter($sqls, function ($item) {
+            if (empty($item)) {
                 return false;
             }
             return !preg_match("#^--|LOCK|UNLOCK|/\*#", trim($item));

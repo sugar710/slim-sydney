@@ -11,7 +11,8 @@ use Slim\Http\Response;
  * Class VerifyDomainMiddleware
  * @package App\Middleware
  */
-class VerifyDomainMiddleware {
+class VerifyDomainMiddleware
+{
 
     /**
      * 允许访问的域名
@@ -21,9 +22,9 @@ class VerifyDomainMiddleware {
 
     public function __construct($allowDomain = '')
     {
-        if(is_array($allowDomain)) {
+        if (is_array($allowDomain)) {
             $this->allowDomain = $allowDomain;
-        } else if(is_string($allowDomain)) {
+        } else if (is_string($allowDomain)) {
             $this->allowDomain = array_filter(explode(",", $allowDomain));
         }
     }
@@ -31,17 +32,39 @@ class VerifyDomainMiddleware {
     public function __invoke(Request $req, Response $res, callable $next)
     {
         $host = $req->getUri()->getHost();
-        if(!empty($this->allowDomain) && !in_array($host, $this->allowDomain)) {
-            if($req->isXhr()) {
-                return $res->withJson([
-                    "status" => 0,
-                    "info" => "非法操作"
-                ],404);
-            } else {
-                $res->getBody()->write("非法操作");
-                return $res->withStatus(404);
-            }
+        if (!$this->allow($host)) {
+            return $this->reject($req, $res);
         }
         return $next($req, $res);
+    }
+
+    /**
+     * 阻止请求
+     *
+     * @param Request $req
+     * @param Response $res
+     * @return mixed|static
+     */
+    private function reject(Request $req, Response $res)
+    {
+        if ($req->isXhr()) {
+            return $res->withJson([
+                "status" => 0,
+                "info" => "非法操作",
+            ], 404);
+        }
+        $res->getBody()->write("404 Not Found");
+        return $res->withStatus(404);
+    }
+
+    /**
+     * 是否通过
+     *
+     * @param $host
+     * @return bool
+     */
+    public function allow($host)
+    {
+        return empty($this->allowDomain) || in_array($host, $this->allowDomain);
     }
 }

@@ -7,6 +7,7 @@ use App\Controllers\Admin\HomeController;
 use App\Controllers\Admin\AdminRoleController;
 use App\Controllers\Admin\AdminRouterController;
 use App\Controllers\Admin\AdminMenuController;
+use App\Controllers\Admin\AdminUserController;
 use App\Middleware\VerifyAdminLoginMiddleware;
 use App\Middleware\VerifyDomainMiddleware;
 use App\Middleware\VerifyInstallMiddleware;
@@ -28,12 +29,6 @@ $app->group("/admin", function () use ($app) {
     $app->group("", function () use ($app) {
         $app->get("/home", HomeController::class . ':home');
 
-        //权限管理
-        $app->get('/permission', AdminPermissionController::class . ':index')->setName("admin.permission");
-        $app->get('/permission/data', AdminPermissionController::class . ':data');
-        $app->get('/permission/delete', AdminPermissionController::class . ':doDelete');
-        $app->post('/permission', AdminPermissionController::class . ':save');
-
         //角色管理
         $app->get('/role', AdminRoleController::class . ':index')->setName("admin.role");
         $app->get('/role/data', AdminRoleController::class . ':data');
@@ -52,8 +47,14 @@ $app->group("/admin", function () use ($app) {
         $app->get('/menu/delete', AdminMenuController::class . ':doDelete');
         $app->post('/menu', AdminMenuController::class . ':save');
 
+        //用户管理
+        $app->get('/user', AdminUserController::class . ':index')->setName('admin.user');
+        $app->get('/user/data', AdminUserController::class . ':data');
+        $app->get('/user/delete', AdminUserController::class . ':doDelete');
+        $app->post('/user', AdminUserController::class . ':save');
+
     })->add(VerifyAdminLoginMiddleware::class);
 
-})->add(new VerifyInstallMiddleware(true))->add(new VerifyDomainMiddleware($adminDomain));
+})->add(new VerifyInstallMiddleware(VerifyInstallMiddleware::INSTALL))->add(new VerifyDomainMiddleware($adminDomain));
 
 require __DIR__ . '/Routers/install.php';

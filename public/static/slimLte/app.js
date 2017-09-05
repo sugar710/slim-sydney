@@ -49,4 +49,48 @@ $(function () {
         });
         return result;
     }
+
+    $("input:file[data-action='upload']").on('change',function(){
+        var _this = $(this), uploadUrl = _this.data("upload-url") || '/public/upload';
+        $(this.files).each(function(){
+            var formData = new FormData();
+            formData.append("file", this);
+            upload(uploadUrl, formData).then(function(data) {
+                _this.triggerHandler("uploadComplete", [data.status, data.data]);
+            }).catch(function(err) {
+                console.log(err);
+            });
+        });
+    });
 });
+
+
+/**
+ * 文件上传
+ *
+ * @param url 处理文件上传地址
+ * @param formData
+ */
+function upload(url, formData) {
+    url = url || '/public/upload';
+    return new Promise(function (resolve, reject) {
+        if(!formData) {
+            reject("无上传数据");
+        } else {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                success: function (response) {
+                    resolve(response);
+                },
+                error: function (response) {
+                    reject(response);
+                }
+            });
+        }
+    });
+}

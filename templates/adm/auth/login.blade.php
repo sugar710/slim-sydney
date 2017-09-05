@@ -74,8 +74,11 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
     $(function () {
-        @if($error = flash('auth.error'))
+        @if($error = flash('action.error'))
         toastr.error('{{ $error }}');
+        @endif
+        @if($success = flash('action.success'))
+        toastr.success('{{ $success }}');
         @endif
         $('input').iCheck({
             checkboxClass: 'icheckbox_square-blue',

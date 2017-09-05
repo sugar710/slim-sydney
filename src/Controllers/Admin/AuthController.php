@@ -30,18 +30,16 @@ class AuthController extends Controller
     {
         $username = $req->getParam("username");
         $password = $req->getParam("password");
-        $info = $this->db->table("admin_user")->where("username", $username)->first();
+        $info = $this->table("admin_user")->where("username", $username)->first();
         if(empty($info)) {
-            flash('auth.error', '账号或密码错误');
-            return $res->withRedirect(admUrl('/login'));
+            return $this->reject("账号或密码错误", $this->backUrl());
         }
         $result = password_verify($password, $info->password);
         if ($result) {
             $this->session->set("admUser", $info);
-            return $res->withRedirect(admUrl('/home'));
+            return $this->resolve("登录成功", admUrl('/home'));
         } else {
-            flash('auth.error', '账号或密码错误');
-            return $res->withRedirect(admUrl('/login'));
+            return $this->reject("账号或密码错误", $this->backUrl());
         }
     }
 
@@ -54,7 +52,7 @@ class AuthController extends Controller
      */
     public function logout(Request $req, Response $res) {
         $this->session->delete("admUser");
-        return $res->withRedirect(admUrl('/login'));
+        return $this->resolve("登出成功", admUrl('/login'));
     }
 
 }

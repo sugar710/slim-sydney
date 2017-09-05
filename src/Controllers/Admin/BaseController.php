@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\Controller;
+use App\Models\AdminMenu;
 use Slim\Container;
 
 /**
@@ -17,12 +18,25 @@ class BaseController extends Controller
 
     protected $viewFolder = 'adm';
 
+    protected $now = '';
+
     public function __construct(Container $container)
     {
         parent::__construct($container);
-        $this->adminUser = $this->session->get("admUser");
-        $this->view->share("adminUser", $this->adminUser);
         $this->db;
+        $this->now = date('Y-m-d H:i:s');
+        $this->adminUser = $this->session->get("admUser");
+        $this->adminShare();
+    }
+
+    /**
+     * 管理后台公用模板数据
+     */
+    private function adminShare() {
+        $adminMenus = AdminMenu::levelMenu();
+        $this->view->share("adminUser", $this->adminUser);
+        $this->view->share("adminMenus", $adminMenus);
+        $this->view->share("adminPath", $this->req->getUri()->getPath());
     }
 
     /**
@@ -34,7 +48,7 @@ class BaseController extends Controller
      */
     public function render($view, array $params = [])
     {
-        $view = $this->viewFolder . '.' . ltrim($view, $this->viewFolder);
+        $view = strstr($view, $this->viewFolder) === 0 ? $view : $this->viewFolder . '.' . $view;
         return $this->view->render($view, $params);
     }
 

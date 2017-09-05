@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- select2 -->
+    <link rel="stylesheet" href="{{ admAsset('plugins/select2/select2.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ admAsset('dist/css/AdminLTE.min.css') }}">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -31,6 +33,7 @@
     <link rel="stylesheet" href="{{ admAsset('plugins/daterangepicker/daterangepicker.css') }}">
     <!-- bootstrap wysihtml5 - text editor -->
     <link rel="stylesheet" href="{{ admAsset('plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
+
     <link rel="stylesheet" href="{{ asset('slimLte/app.css') }}">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -39,7 +42,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body class="hold-transition skin-blue sidebar-mini" data-toastr-success="{{ flash('action.success') }}" data-toastr-error="{{ flash('action.error') }}">
+<body class="hold-transition skin-blue sidebar-mini fixed" data-toastr-success="{{ flash('action.success') }}" data-toastr-error="{{ flash('action.error') }}">
 <div class="wrapper">
 
 @include("adm.layout-header")
@@ -279,6 +282,9 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <!-- Bootstrap WYSIHTML5 -->
 <script src="{{ admAsset('plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
+<!-- select2 -->
+<script src="{{ admAsset('plugins/select2/select2.min.js') }}"></script>
+<script src="{{ admAsset('plugins/select2/i18n/zh-CN.js') }}"></script>
 <!-- Slimscroll -->
 <script src="{{ admAsset('plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
 <!-- FastClick -->
@@ -292,7 +298,17 @@
 <script src="{{ asset('/slimLte/app.js') }}"></script>
 <script type="text/javascript">
     $(function(){
+        var adminPath = "{{ $adminPath }}";
 
+        $(".select2").select2();
+
+        $(".sidebar-menu a").each(function(){
+            var link = $(this),url = link.attr("href");
+            $(".slidebar li").removeClass("active");
+            if(url.indexOf(adminPath) !== -1) {
+                link.parents("li").addClass("active");
+            }
+        });
     });
 </script>
 @yield('js')

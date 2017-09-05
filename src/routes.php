@@ -2,53 +2,65 @@
 // Routes
 use Slim\Http\Request;
 use Slim\Http\Response;
+use App\Controllers\PublicController;
 use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\HomeController;
-use App\Controllers\InstallController;
-use App\Controllers\Admin\AdminPermissionController;
+use App\Controllers\Admin\AdminRoleController;
+use App\Controllers\Admin\AdminRouterController;
+use App\Controllers\Admin\AdminMenuController;
+use App\Controllers\Admin\AdminUserController;
 use App\Middleware\VerifyAdminLoginMiddleware;
+use App\Middleware\VerifyDomainMiddleware;
+use App\Middleware\VerifyInstallMiddleware;
 
-$app->get('/admin/login', AuthController::class . ':login');
+$adminDomain = env("ADMIN_DOMAIN", '');
 
-$app->post('/admin/login', AuthController::class . ':doLogin');
+//文件上传
+$app->post('/public/upload', PublicController::class . ':upload');
 
-$app->get('/admin/logout', AuthController::class . ':logout');
-
-$app->group("/admin", function() use ($app) {
-    $app->get("/home", HomeController::class . ':home');
-
-    //权限管理
-    $app->get('/permission', AdminPermissionController::class . ':index')->setName("admin.permission");
-    $app->get('/permission/data', AdminPermissionController::class . ':data');
-    $app->get('/permission/delete', AdminPermissionController::class . ':doDelete');
-    $app->post('/permission', AdminPermissionController::class . ':save');
-
-})->add(VerifyAdminLoginMiddleware::class);
-
-$app->get("/install", function(Request $req, Response $res) {
-    return $res->withRedirect("/install/welcome");
+$app->get('/admin', function (Request $req, Response $res) {
+    return $res->withRedirect("/admin/home", 301);
 });
 
-$app->group("/install", function() use ($app){
+$app->group("/admin", function () use ($app) {
 
-    $app->get("/", function(Request $req, Response $res){
-        return $res->withRedirect('/install/welcome');
-    });
+    $app->get('/login', AuthController::class . ':login');
 
-   $app->get("/welcome", InstallController::class . ':welcome');
+    $app->post('/login', AuthController::class . ':doLogin');
 
-   $app->post("/agree/verify", InstallController::class . ':agreeVerify');
+    $app->get('/logout', AuthController::class . ':logout');
 
-   $app->get("/env", InstallController::class . ':env');
+    $app->group("", function () use ($app) {
+        $app->get("/home", HomeController::class . ':home');
 
-   $app->get("/database", InstallController::class . ':database');
+        //角色管理
+        $app->get('/role', AdminRoleController::class . ':index')->setName("admin.role");
+        $app->get('/role/data', AdminRoleController::class . ':data');
+        $app->get('/role/delete', AdminRoleController::class . ':doDelete');
+        $app->post('/role', AdminRoleController::class . ':save');
 
-   $app->post("/database/verify", InstallController::class . ':databaseVerify');
+        //路由表管理
+        $app->get('/router', AdminRouterController::class . ':index')->setName('admin.router');
+        $app->get('/router/data', AdminRouterController::class . ':data');
+        $app->get('/router/delete', AdminRouterController::class . ':doDelete');
+        $app->post('/router', AdminRouterController::class . ':save');
 
-   $app->get("/account", InstallController::class . ':accountConf');
+        //菜单管理
+        $app->get('/menu', AdminMenuController::class . ':index')->setName('admin.menu');
+        $app->get('/menu/data', AdminMenuController::class . ":data");
+        $app->get('/menu/delete', AdminMenuController::class . ':doDelete');
+        $app->post('/menu', AdminMenuController::class . ':save');
 
-   $app->post("/account/verify", InstallController::class . ":accountVerify");
+        //用户管理
+        $app->get('/user', AdminUserController::class . ':index')->setName('admin.user');
+        $app->get('/user/data', AdminUserController::class . ':data');
+        $app->get('/user/delete', AdminUserController::class . ':doDelete');
+        $app->get('/user/switchLock', AdminUserController::class . ':doLock');
+        $app->post('/user', AdminUserController::class . ':save');
 
-   $app->get("/ready/go", InstallController::class . ':doInstall');
 
-});
+    })->add(VerifyAdminLoginMiddleware::class);
+
+})->add(new VerifyInstallMiddleware(VerifyInstallMiddleware::INSTALL))->add(new VerifyDomainMiddleware($adminDomain));
+
+require __DIR__ . '/Routers/install.php';

@@ -49,10 +49,27 @@
                                        value="{{ old('name', $info->name) }}" placeholder="请输入昵称">
                             </div>
                             <div class="form-group">
+                                <label>头像</label>
+                                <div>
+                                    <input type="hidden" name="avatar" value="{{ $info->avatar or '' }}"/>
+                                    @if(!empty($info['avatar']))
+                                        <img src="{{ iAsset($info['avatar']) }}" style="height:125px;margin-bottom:5px;"
+                                             class="upload-view">
+                                    @else
+                                        <img src="{{ iAsset($info['avatar']) }}" style="height:125px;margin-bottom:5px;display:none;"
+                                             class="upload-view">
+                                    @endif
+                                    <input type="file" data-action="upload"
+                                           data-upload-url="{{ url('public/upload') }}">
+                                </div>
+
+                            </div>
+                            <div class="form-group">
                                 <label>角色</label>
                                 <select name="roles[]" class="form-control select2" multiple="multiple">
                                     @foreach($roles as $role)
-                                        <option @if(in_array($role->id, $info["roles"] ?: [])) selected="selected" @endif value="{{ $role->id }}">{{ $role->name }}</option>
+                                        <option @if(in_array($role->id, $info["roles"] ?: [])) selected="selected"
+                                                @endif value="{{ $role->id }}">{{ $role->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -81,5 +98,12 @@
 @endsection
 
 @section('js')
-    {{ flash('action.error') }}
+    <script type="text/javascript">
+        $(function () {
+            $("input[data-action='upload']").on("uploadComplete", function (e, status, data) {
+                $("input[name='avatar']").val(data.file);
+                $("img.upload-view").attr("src", data.view).show();
+            });
+        });
+    </script>
 @endsection

@@ -2,6 +2,7 @@
 // Routes
 use Slim\Http\Request;
 use Slim\Http\Response;
+use App\Controllers\PublicController;
 use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\HomeController;
 use App\Controllers\Admin\AdminRoleController;
@@ -13,6 +14,9 @@ use App\Middleware\VerifyDomainMiddleware;
 use App\Middleware\VerifyInstallMiddleware;
 
 $adminDomain = env("ADMIN_DOMAIN", '');
+
+//文件上传
+$app->post('/public/upload', PublicController::class . ':upload');
 
 $app->get('/admin', function (Request $req, Response $res) {
     return $res->withRedirect("/admin/home", 301);

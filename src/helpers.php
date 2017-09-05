@@ -23,6 +23,17 @@ function admAsset($path)
 }
 
 /**
+ * 生成上传文件访问地址
+ *
+ * @param $path
+ * @param string $default
+ * @return string
+ */
+function iAsset($path, $default = 'upload/default.png') {
+    return '/' . (!empty($path) ? $path : $default);
+}
+
+/**
  * 生成地址
  *
  * @param $path

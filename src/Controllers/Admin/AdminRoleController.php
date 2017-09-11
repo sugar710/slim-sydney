@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 
 use App\Models\AdminRole;
+use App\Models\AdminRouter;
 use App\Utils\Paginate;
 use Slim\Exception\SlimException;
 use Slim\Http\Request;
@@ -12,7 +13,7 @@ use Webmozart\Assert\Assert;
 
 /**
  * 角色管理
- * 
+ *
  * Class AdminRoleController
  * @package App\Controllers\Admin
  */
@@ -22,7 +23,7 @@ class AdminRoleController extends BaseController implements DataProcessInterface
 
     protected $viewFolder = "adm.authority";
 
-    protected $dataTable = "admin_role";
+    protected $model = AdminRole::class;
 
     public function index(Request $req, Response $res)
     {
@@ -30,7 +31,8 @@ class AdminRoleController extends BaseController implements DataProcessInterface
         $page = $req->getParam("page", 1);
         $page = $page > 0 ? $page : 1;
         $keyword = $req->getParam("keyword", "");
-        $query = $this->table($this->dataTable);
+        $query = call_user_func_array([$this->model, 'orderBy'], ['id', 'asc']);
+
         if ($keyword) {
             $query->orWhere("name", "like", "%{$keyword}%")->orWhere("slug", $keyword);
         }
@@ -55,9 +57,13 @@ class AdminRoleController extends BaseController implements DataProcessInterface
         $id = $req->getParam("id", 0);
         if ($id > 0) {
             $info = AdminRole::find($id);
+            $info->routers = $info->routers()->pluck("router_id")->toArray();
         } else {
             $info = new AdminRole();
+            $info->routers = [];
         }
+        $routers = AdminRouter::orderBy("sort", "desc")->get();
+        $data["routers"] = $routers;
         $data["info"] = $info;
         return $this->render("role.data", $data);
     }
@@ -68,11 +74,12 @@ class AdminRoleController extends BaseController implements DataProcessInterface
      * @param Request $req
      * @throws SlimException
      */
-    protected function validateCreate(Request $req) {
+    protected function validateCreate(Request $req)
+    {
         try {
             Assert::notEmpty($req->getParam("name", ""), "角色名称不能为空");
             Assert::notEmpty($req->getParam("slug", ""), "角色标识不能为空");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new SlimException($req, $this->reject($e->getMessage(), $this->backUrl()));
         }
     }
@@ -83,13 +90,28 @@ class AdminRoleController extends BaseController implements DataProcessInterface
      * @param Request $req
      * @throws SlimException
      */
-    protected function validateUpdate(Request $req) {
+    protected function validateUpdate(Request $req)
+    {
         try {
             Assert::notEmpty($req->getParam("name", ""), "角色名称不能为空");
             Assert::notEmpty($req->getParam("slug", ""), "角色标识不能为空");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new SlimException($req, $this->reject($e->getMessage(), $this->backUrl()));
         }
+    }
+
+    /**
+     * 处理角色路由关联
+     *
+     * @param AdminRole $info
+     * @param Request $req
+     * @return bool
+     */
+    protected function relation(AdminRole $info, Request $req)
+    {
+        $routers = $req->getParam("routers", []) ?: [];
+        $info->routers()->sync($routers);
+        return true;
     }
 
     /**
@@ -97,7 +119,8 @@ class AdminRoleController extends BaseController implements DataProcessInterface
      *
      * @return string
      */
-    protected function redirectToList() {
+    protected function redirectToList()
+    {
         return $this->router->pathFor('admin.role');
     }
 

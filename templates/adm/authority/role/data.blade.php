@@ -27,11 +27,27 @@
                         <div class="box-body">
                             <div class="form-group">
                                 <label>角色名称</label>
-                                <input type="text" class="form-control" name="name" value="{{ old('name', $info->name) }}" placeholder="请输入角色名称">
+                                <input type="text" class="form-control" name="name"
+                                       value="{{ old('name', $info->name) }}" placeholder="请输入角色名称">
                             </div>
                             <div class="form-group">
                                 <label>角色标识</label>
-                                <input type="text" class="form-control" name="slug" value="{{ old('slug', $info->slug) }}" placeholder="请输入角色标识">
+                                <input type="text" class="form-control" name="slug"
+                                       value="{{ old('slug', $info->slug) }}" placeholder="请输入角色标识">
+                            </div>
+                            <div class="form-group">
+                                <label>路由权限</label>
+                                <div>
+                                    <label style="font-weight:normal;">
+                                        <input type="checkbox" name="checkall" /> 全选
+                                    </label>
+                                    @foreach($routers as $route)
+                                        <label style="font-weight:normal;">
+                                            <input @if(in_array($route->id, $info['routers'] ?: [])) checked="checked" @endif type="checkbox" name="routers[]" value="{{ $route->id }}">
+                                            {{ $route->name }}
+                                        </label>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                         <!-- /.box-body -->
@@ -45,7 +61,28 @@
         </div>
     </section>
 @endsection
-
+@section('css')
+    <!-- iCheck -->
+    <link rel="stylesheet" href="{{ admAsset('plugins/iCheck/square/blue.css') }}">
+@endsection
 @section('js')
     {{ flash('action.error') }}
+    <!-- iCheck -->
+    <script src="{{ admAsset('plugins/iCheck/icheck.min.js') }}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('input:checkbox').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' // optional
+            });
+
+            $("input:checkbox[name='checkall']").on("ifChecked", function(e) {
+                $("input[name='routers[]']").iCheck('check');
+            }).on("ifUnchecked", function(e) {
+                $("input[name='routers[]']").iCheck('uncheck');
+            });
+
+        });
+    </script>
 @endsection

@@ -3,6 +3,8 @@
 namespace App\Controllers\Admin;
 
 use App\Models\AdminRole;
+use App\Models\AdminRouter;
+use App\Models\Model;
 use App\Models\User;
 use App\Utils\Paginate;
 use Slim\Exception\SlimException;
@@ -66,12 +68,15 @@ class AdminUserController extends BaseController implements DataProcessInterface
         if ($id > 0) {
             $info = call_user_func([$this->model, 'find'], $id);
             $info["roles"] = $info->roles()->pluck("role_id")->toArray();
+            $info["routers"] = $info->routers()->pluck("router_id")->toArray();
         } else {
             $info = new $this->model();
             $info["roles"] = [];
+            $info["routers"] = [];
         }
         $data["info"] = $info;
         $data["roles"] = AdminRole::orderBy("id", "asc")->get(["id", "name"]);
+        $data["routers"] = AdminRouter::orderBy("sort", "desc")->get(["id", "name"]);
         return $this->render("user.data", $data);
     }
 
@@ -121,7 +126,7 @@ class AdminUserController extends BaseController implements DataProcessInterface
     public function doCreate(Request $req, Response $res)
     {
         $this->validateCreate($req);
-        $roles = $req->getParam("roles", []) ?: [];
+
         $data = $this->fieldFilter($req->getParams());
         $data = array_merge($data, ["created_at" => $this->now, "updated_at" => $this->now]);
         if ($data["password"]) {
@@ -129,7 +134,7 @@ class AdminUserController extends BaseController implements DataProcessInterface
         }
         try {
             $user = call_user_func([$this->model, 'create'], $data);
-            $user->roles()->attach($roles);
+            $this->relation($user, $req);
         } catch (\Exception $e) {
             $this->logException($req, $e);
             return $this->reject("数据保存失败请重试", $this->backUrl());
@@ -148,7 +153,6 @@ class AdminUserController extends BaseController implements DataProcessInterface
     public function doUpdate(Request $req, Response $res)
     {
         $id = $req->getParam("id", 0);
-        $roles = $req->getParam("roles", []) ?: [];
         $this->validateUpdate($req);
 
         $data = $this->fieldFilter($req->getParams());
@@ -162,13 +166,21 @@ class AdminUserController extends BaseController implements DataProcessInterface
         try {
             $user = call_user_func([$this->model, 'find'], $id);
             call_user_func_array([$this->model, 'where'], ["id", $id])->update($data);
-            $user->roles()->sync($roles);
+            $this->relation($user, $req);
         } catch (\Exception $e) {
             $this->logException($req, $e);
             return $this->reject("数据更新失败请重试", $this->backUrl());
         }
 
         return $this->resolve("数据更新成功", $this->redirectToList());
+    }
+
+    protected function relation(Model $info, Request $req)
+    {
+        $roles = $req->getParam("roles", []) ?: [];
+        $routers = $req->getParam("routers", []) ?: [];
+        $info->roles()->sync($roles);
+        $info->routers()->sync($routers);
     }
 
     /**

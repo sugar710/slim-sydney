@@ -55,12 +55,14 @@ $app->group("/admin", function () use ($app) {
         $app->get('/user', AdminUserController::class . ':index')->setName('admin.user');
         $app->get('/user/data', AdminUserController::class . ':data');
         $app->get('/user/delete', AdminUserController::class . ':doDelete');
-        $app->get('/user/switchLock', AdminUserController::class . ':doLock');
+        $app->get('/user/switchLock', AdminUserController::class . ':doLock')
+            ->add(new \App\Middleware\PermissionMiddleware("deny", "nb"));
         $app->post('/user', AdminUserController::class . ':save');
 
 
-    })->add(VerifyAdminLoginMiddleware::class);
+    })->add(VerifyAdminLoginMiddleware::class)->add(\App\Middleware\VerifyRouterMiddleware::class);
 
-})->add(new VerifyInstallMiddleware(VerifyInstallMiddleware::INSTALL))->add(new VerifyDomainMiddleware($adminDomain));
+})->add(new VerifyInstallMiddleware(VerifyInstallMiddleware::INSTALL))
+    ->add(new VerifyDomainMiddleware($adminDomain));
 
 require __DIR__ . '/Routers/install.php';

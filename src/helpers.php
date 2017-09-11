@@ -212,6 +212,16 @@ function session($key, $default = null)
 }
 
 /**
+ * 记录日志
+ *
+ * @param string $msg 日志内容
+ * @param string $type 日志类型
+ */
+function logger($msg, $type = "info") {
+    make("logger")->{$type}($msg);
+}
+
+/**
  * 获取组件
  *
  * @param null $name

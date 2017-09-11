@@ -20,7 +20,7 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
 
     protected $viewFolder = "adm.authority";
 
-    protected $dataTable = "admin_router";
+    protected $model = AdminRouter::class;
 
     /**
      * 路由项管理列表
@@ -34,7 +34,7 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
         $page = $req->getParam("page", 1);
         $page = $page > 0 ? $page : 1;
         $keyword = $req->getParam("keyword", "");
-        $query = $this->table($this->dataTable);
+        $query = call_user_func([$this->model, 'orderBy'], 'sort', 'desc');
         if ($keyword) {
             $query->orWhere("name", "like", "%{$keyword}%")->orWhere("slug", $keyword);
         }

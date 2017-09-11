@@ -56,7 +56,8 @@
                                         <img src="{{ iAsset($info['avatar']) }}" style="height:125px;margin-bottom:5px;"
                                              class="upload-view">
                                     @else
-                                        <img src="{{ iAsset($info['avatar']) }}" style="height:125px;margin-bottom:5px;display:none;"
+                                        <img src="{{ iAsset($info['avatar']) }}"
+                                             style="height:125px;margin-bottom:5px;display:none;"
                                              class="upload-view">
                                     @endif
                                     <input type="file" data-action="upload"
@@ -66,12 +67,28 @@
                             </div>
                             <div class="form-group">
                                 <label>角色</label>
-                                <select name="roles[]" class="form-control select2" multiple="multiple">
+                                <div>
                                     @foreach($roles as $role)
-                                        <option @if(in_array($role->id, $info["roles"] ?: [])) selected="selected"
-                                                @endif value="{{ $role->id }}">{{ $role->name }}</option>
+                                        <label style="font-weight:normal;">
+                                            <input @if(in_array($role->id, old("roles", $info["roles"] ?: []))) checked="checked"
+                                                   @endif type="checkbox" name="roles[]" value="{{ $role->id }}">
+                                            {{ $role->name }}
+                                        </label>
                                     @endforeach
-                                </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>路由</label>
+                                <div>
+                                    @foreach($routers as $router)
+                                        <label style="font-weight:normal;">
+                                            <input @if(in_array($router->id, old('routers', $info['routers'] ?: []))) checked="checked"
+                                                   @endif type="checkbox" name="routers[]" value="{{ $router->id }}">
+                                            {{ $router->name }}
+                                        </label>
+                                    @endforeach
+                                </div>
                             </div>
 
                             <div class="form-group">
@@ -96,10 +113,21 @@
         </div>
     </section>
 @endsection
-
+@section('css')
+    <!-- iCheck -->
+    <link rel="stylesheet" href="{{ admAsset('plugins/iCheck/square/blue.css') }}">
+@endsection
 @section('js')
+    <!-- iCheck -->
+    <script src="{{ admAsset('plugins/iCheck/icheck.min.js') }}"></script>
     <script type="text/javascript">
         $(function () {
+            $('input:checkbox').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' // optional
+            });
+
             $("input[data-action='upload']").on("uploadComplete", function (e, status, data) {
                 $("input[name='avatar']").val(data.file);
                 $("img.upload-view").attr("src", data.view).show();

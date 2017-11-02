@@ -53,7 +53,7 @@ class BaseController extends Controller
             if(empty($item->router)) {
                 return true;
             }
-            return in_array($item->router->id, $routers);
+            return $this->adminUser->id == 1 || $this->adminUser->isRole('root') || in_array($item->router->id, $routers);
         });
         return levelArr($list->toArray(), 0, 'pid');
     }

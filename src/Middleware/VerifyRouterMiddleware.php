@@ -31,7 +31,7 @@ class VerifyRouterMiddleware
             logger('未加入权限验证路由');
             return $next($req, $res);
         }
-        if ($this->adminUser->isRole('root')) {
+        if ($this->adminUser->isRole('root') || $this->adminUser->id === 1) {
             logger("超管直接跳转");
             return $next($req, $res);
         }

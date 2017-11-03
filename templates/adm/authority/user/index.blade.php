@@ -105,7 +105,7 @@
                             @endforeach
                             @if($list->isEmpty())
                                 <tr>
-                                    <td colspan="5" class="text-center">
+                                    <td colspan="8" class="text-center">
                                         暂无数据
                                     </td>
                                 </tr>

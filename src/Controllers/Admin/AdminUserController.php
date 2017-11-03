@@ -43,7 +43,11 @@ class AdminUserController extends BaseController implements DataProcessInterface
         $query = call_user_func_array([$this->model, 'orderBy'], ['id', 'asc']);
         $query->with(['roles']);
         if ($keyword) {
-            $query->orWhere("name", "like", "%{$keyword}%");
+            $query->where(function ($q) use ($keyword) {
+                $q->orWhere("name", "like", "%{$keyword}%")
+                    ->orWhere("username", "like", "%{$keyword}%")
+                    ->orWhere("email", "like", "%{$keyword}%");
+            });
         }
         $count = $query->count();
         $list = $query->skip(($page - 1) * $size)->take($size)->get();

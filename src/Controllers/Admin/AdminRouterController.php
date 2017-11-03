@@ -36,7 +36,11 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
         $keyword = $req->getParam("keyword", "");
         $query = call_user_func([$this->model, 'orderBy'], 'sort', 'desc');
         if ($keyword) {
-            $query->orWhere("name", "like", "%{$keyword}%")->orWhere("slug", $keyword);
+            $query->where(function ($q) use ($keyword) {
+                $q->orWhere("name", "like", "%{$keyword}%")
+                    ->orWhere("slug", $keyword)
+                    ->orWhere("path", "like", "%{$keyword}%");
+            });
         }
         $count = $query->count();
         $list = $query->skip(($page - 1) * $size)->take($size)->get();
@@ -72,13 +76,14 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
      * @param Request $req
      * @throws SlimException
      */
-    protected function validateCreate(Request $req) {
+    protected function validateCreate(Request $req)
+    {
         try {
             Assert::notEmpty($req->getParam("name", ""), "路由名称不能为空");
             Assert::notEmpty($req->getParam("path", ""), "路由地址不能为空");
             Assert::notEmpty($req->getParam("slug", ""), "路由标记不能为空");
             Assert::true(in_array($req->getParam("status", "T"), ["T", "F"]), "启用状态不正确");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new SlimException($req, $this->reject($e->getMessage(), $this->backUrl()));
         }
     }
@@ -89,13 +94,14 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
      * @param Request $req
      * @throws SlimException
      */
-    protected function validateUpdate(Request $req) {
+    protected function validateUpdate(Request $req)
+    {
         try {
             Assert::notEmpty($req->getParam("name", ""), "路由名称不能为空");
             Assert::notEmpty($req->getParam("path", ""), "路由地址不能为空");
             Assert::notEmpty($req->getParam("slug", ""), "路由标记不能为空");
             Assert::true(in_array($req->getParam("status", "T"), ["T", "F"]), "启用状态不正确");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new SlimException($req, $this->reject($e->getMessage(), $this->backUrl()));
         }
     }
@@ -105,7 +111,8 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
      *
      * @return string
      */
-    protected function redirectToList() {
+    protected function redirectToList()
+    {
         return $this->router->pathFor('admin.router');
     }
 }

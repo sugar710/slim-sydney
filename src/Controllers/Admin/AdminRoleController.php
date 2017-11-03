@@ -34,7 +34,9 @@ class AdminRoleController extends BaseController implements DataProcessInterface
         $query = call_user_func_array([$this->model, 'orderBy'], ['id', 'asc']);
 
         if ($keyword) {
-            $query->orWhere("name", "like", "%{$keyword}%")->orWhere("slug", $keyword);
+            $query->where(function ($q) use ($keyword) {
+                $q->orWhere("name", "like", "%{$keyword}%")->orWhere("slug", $keyword);
+            });
         }
         $count = $query->count();
         $list = $query->skip(($page - 1) * $size)->take($size)->get();

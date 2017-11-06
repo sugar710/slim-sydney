@@ -67,6 +67,7 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
             $info = new AdminRouter();
         }
         $data["info"] = $info;
+        $data["adminPath"] = "/admin/router";
         return $this->render("router.data", $data);
     }
 

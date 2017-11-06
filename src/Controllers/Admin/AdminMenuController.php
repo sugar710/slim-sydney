@@ -63,6 +63,7 @@ class AdminMenuController extends BaseController implements DataProcessInterface
         $data["info"] = $info;
         $data["menus"] = $menus;
         $data["routers"] = $routers;
+        $data["adminPath"] = "/admin/menu";
         return $this->render("menu.data", $data);
     }
 

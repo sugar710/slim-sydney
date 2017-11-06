@@ -67,6 +67,7 @@ class AdminRoleController extends BaseController implements DataProcessInterface
         $routers = AdminRouter::orderBy("sort", "desc")->get();
         $data["routers"] = $routers;
         $data["info"] = $info;
+        $data["adminPath"] = "/admin/role";
         return $this->render("role.data", $data);
     }
 

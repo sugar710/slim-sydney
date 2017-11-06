@@ -81,6 +81,7 @@ class AdminUserController extends BaseController implements DataProcessInterface
         $data["info"] = $info;
         $data["roles"] = AdminRole::orderBy("id", "asc")->get(["id", "name"]);
         $data["routers"] = AdminRouter::orderBy("sort", "desc")->get(["id", "name"]);
+        $data["adminPath"] = "/admin/user";
         return $this->render("user.data", $data);
     }
 

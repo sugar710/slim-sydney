@@ -16,7 +16,7 @@ use Slim\Http\Response;
 class AdminLogController extends BaseController
 {
 
-    protected $model = AdminLog::class;
+    protected $modelName = AdminLog::class;
 
     /**
      * 日志列表
@@ -31,11 +31,11 @@ class AdminLogController extends BaseController
         $page = $req->getParam("page", 1);
         $page = $page > 0 ? $page : 1;
         $keyword = $req->getParam("keyword", "");
-        $query = call_user_func_array([$this->model, 'orderBy'], ['id', 'desc']);
+        $query = $this->model->orderBy("id", "desc");
 
         if (!empty($keyword)) {
             $query->where(function ($q) use ($keyword) {
-                $q->orWhere("path", "like", "%{$keyword}%");//->orWhere("input", "like", "%{$keyword}%");
+                $q->orWhere("path", "like", "%{$keyword}%");
             });
         }
         $count = $query->count();
@@ -65,11 +65,8 @@ class AdminLogController extends BaseController
         }
 
         try {
-            //$info = call_user_func([$this->model, 'where'], "id", $id)->first();
-            call_user_func([$this->model, 'whereIn'], "id", $id)->delete();
-            //$this->relation($info, $req);
+            $this->model->whereIn("id", $id)->delete();
         } catch (\Exception $e) {
-            //$this->logException($req, $e);
             return $this->reject("数据删除失败请重试", $this->backUrl());
         }
 
@@ -81,7 +78,8 @@ class AdminLogController extends BaseController
      *
      * @return string
      */
-    protected function redirectToList() {
+    protected function redirectToList()
+    {
         return $this->router->pathFor('admin.log');
     }
 

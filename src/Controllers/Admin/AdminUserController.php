@@ -24,9 +24,7 @@ class AdminUserController extends BaseController implements DataProcessInterface
 
     protected $viewFolder = "adm.authority";
 
-    protected $dataTable = "admin_user";
-
-    protected $model = User::class;
+    protected $modelName = User::class;
 
     /**
      * 用户管理列表
@@ -40,7 +38,7 @@ class AdminUserController extends BaseController implements DataProcessInterface
         $page = $req->getParam("page", 1);
         $page = $page > 0 ? $page : 1;
         $keyword = $req->getParam("keyword", "");
-        $query = call_user_func_array([$this->model, 'orderBy'], ['id', 'asc']);
+        $query = $this->model->orderBy("id", "asc");
         $query->with(['roles']);
         if ($keyword) {
             $query->where(function ($q) use ($keyword) {
@@ -70,7 +68,7 @@ class AdminUserController extends BaseController implements DataProcessInterface
         $data = [];
         $id = $req->getParam("id", 0);
         if ($id > 0) {
-            $info = call_user_func([$this->model, 'find'], $id);
+            $info = $this->model->find($id);
             $info["roles"] = $info->roles()->pluck("role_id")->toArray();
             $info["routers"] = $info->routers()->pluck("router_id")->toArray();
         } else {
@@ -138,7 +136,7 @@ class AdminUserController extends BaseController implements DataProcessInterface
             $data["password"] = password_hash($data["password"], PASSWORD_BCRYPT);
         }
         try {
-            $user = call_user_func([$this->model, 'create'], $data);
+            $user = $this->model->create($data);
             $this->relation($user, $req);
         } catch (\Exception $e) {
             $this->logException($req, $e);
@@ -169,8 +167,8 @@ class AdminUserController extends BaseController implements DataProcessInterface
         }
 
         try {
-            $user = call_user_func([$this->model, 'find'], $id);
-            call_user_func_array([$this->model, 'where'], ["id", $id])->update($data);
+            $user = $this->model->find($id);
+            $this->model->where("id", $id)->update($data);
             $this->relation($user, $req);
         } catch (\Exception $e) {
             $this->logException($req, $e);

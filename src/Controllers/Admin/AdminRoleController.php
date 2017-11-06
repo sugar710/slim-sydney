@@ -23,7 +23,7 @@ class AdminRoleController extends BaseController implements DataProcessInterface
 
     protected $viewFolder = "adm.authority";
 
-    protected $model = AdminRole::class;
+    protected $modelName = AdminRole::class;
 
     public function index(Request $req, Response $res)
     {
@@ -31,7 +31,7 @@ class AdminRoleController extends BaseController implements DataProcessInterface
         $page = $req->getParam("page", 1);
         $page = $page > 0 ? $page : 1;
         $keyword = $req->getParam("keyword", "");
-        $query = call_user_func_array([$this->model, 'orderBy'], ['id', 'asc']);
+        $query = $this->model->orderBy("id", "asc");
 
         if ($keyword) {
             $query->where(function ($q) use ($keyword) {
@@ -58,7 +58,7 @@ class AdminRoleController extends BaseController implements DataProcessInterface
         $data = [];
         $id = $req->getParam("id", 0);
         if ($id > 0) {
-            $info = AdminRole::find($id);
+            $info = $this->model->find($id);
             $info->routers = $info->routers()->pluck("router_id")->toArray();
         } else {
             $info = new AdminRole();

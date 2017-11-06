@@ -12,6 +12,7 @@ use Slim\Http\Response;
  * @property \Illuminate\Database\Capsule\Manager db
  * @property \SlimSession\Helper session
  * @property \Monolog\Logger logger
+ * @property \App\Models\Model $model
  * @property \Illuminate\Database\Schema\Builder schema
  * @property \Slim\Http\Request req
  * @property \Slim\Http\Response res
@@ -28,10 +29,13 @@ class Controller
 
     public function __get($name)
     {
+        if ($name == "model" && !empty($this->modelName)) {
+            return new $this->modelName;
+        }
         if ($value = $this->container->get($name)) {
             return $value;
         }
-        throw new \Exception($name . '不存在');
+        return null;
     }
 
     /**
@@ -54,7 +58,6 @@ class Controller
     public function jsonTip($status = 1, $info = "OK", $data = [])
     {
         $json = compact("status", "info");
-        $this->logger->info(print_r($json, true));
         if (is_array($status)) {
             $json = $status;
         } else {
@@ -62,6 +65,7 @@ class Controller
                 $json["data"] = $data;
             }
         }
+        $this->logger->info(print_r($json, true));
         return (new Response())->withJson($json, 200, JSON_UNESCAPED_UNICODE);
     }
 
@@ -99,5 +103,16 @@ class Controller
     {
         $urls = make("request")->getHeader("HTTP_REFERER");
         return $urls ? array_first($urls) : admUrl($fallback);
+    }
+
+    /**
+     * 记录错误信息
+     *
+     * @param Request $req
+     * @param \Exception $e
+     */
+    public function logException(Request $req, \Exception $e)
+    {
+        $this->logger->info($req->getMethod() . " " . $req->getUri()->getPath() . "\n" . $e->getMessage() . "\n" . $e->getTraceAsString());
     }
 }

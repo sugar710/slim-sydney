@@ -57,7 +57,7 @@ trait DataProcessTrait
         $data = $this->fieldFilter($req->getParams());
 
         try {
-            $info = call_user_func([$this->model, 'create'], $data);
+            $info = $this->model->create($data);
             $this->relation($info, $req);
         } catch (\Exception $e) {
             $this->logException($req, $e);
@@ -83,8 +83,8 @@ trait DataProcessTrait
         $data = array_merge($data, ["updated_at" => date("Y-m-d H:i:s")]);
 
         try {
-            $info = call_user_func([$this->model, 'find'], $id);
-            call_user_func([$this->model, 'where'], "id", $id)->update($data);
+            $info = $this->model->find($id);
+            $this->model->where("id", $id)->update($data);
             $this->relation($info, $req);
         } catch (\Exception $e) {
             $this->logException($req, $e);
@@ -110,9 +110,11 @@ trait DataProcessTrait
         }
 
         try {
-            $info = call_user_func([$this->model, 'where'], "id", $id)->first();
-            call_user_func([$this->model, 'whereIn'], "id", $id)->delete();
-            $this->relation($info, $req);
+            $list = $this->model->whereIn("id", $id)->get();
+            foreach ($list as $item) {
+                $this->relation($item, $req);
+                $item->delete();
+            }
         } catch (\Exception $e) {
             $this->logException($req, $e);
             return $this->reject("数据删除失败请重试", $this->backUrl());
@@ -121,6 +123,13 @@ trait DataProcessTrait
         return $this->resolve("数据删除成功", $this->redirectToList());
     }
 
+    /**
+     * 处理模型关联数据
+     *
+     * @param Model $info
+     * @param Request $req
+     * @return bool
+     */
     protected function relation(Model $info, Request $req)
     {
         return true;
@@ -134,7 +143,7 @@ trait DataProcessTrait
      */
     protected function fieldFilter(array $fields = [])
     {
-        $tableName = call_user_func([new $this->model, 'getTable']);
+        $tableName = $this->model->getTable();
         $columns = $this->schema->getColumnListing($tableName);
         $fields = array_filter($fields, function ($field) use ($columns) {
             return in_array($field, $columns);
@@ -142,15 +151,5 @@ trait DataProcessTrait
         return $fields;
     }
 
-    /**
-     * 记录错误信息
-     *
-     * @param Request $req
-     * @param \Exception $e
-     */
-    public function logException(Request $req, \Exception $e)
-    {
-        $this->logger->info($req->getMethod() . " " . $req->getUri()->getPath() . "\n" . $e->getMessage() . "\n" . $e->getTraceAsString());
-    }
 
 }

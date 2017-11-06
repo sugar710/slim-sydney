@@ -11,7 +11,7 @@ use Slim\Http\Response;
  * Class VerifyInstallMiddleware
  * @package App\Middleware
  */
-class VerifyInstallMiddleware
+class VerifyInstallMiddleware extends Middleware
 {
     const INSTALL = true;
 

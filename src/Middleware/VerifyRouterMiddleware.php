@@ -13,13 +13,13 @@ use Slim\Http\Response;
  * Class VerifyRouterMiddleware
  * @package App\Middleware
  */
-class VerifyRouterMiddleware
+class VerifyRouterMiddleware extends Middleware
 {
     private $adminUser;
 
     public function __construct()
     {
-        $info = make("session")->get("admUser");
+        $info = $this->session->get("admUser");
         $this->adminUser = User::find($info->id);
     }
 
@@ -28,15 +28,15 @@ class VerifyRouterMiddleware
         $path = $req->getUri()->getPath();
         $method = $req->getMethod();
         if (!$router = $this->getRouter($path, $method)) {
-            logger('未加入权限验证路由');
+            $this->logger->info('未加入权限验证路由');
             return $next($req, $res);
         }
         if ($this->adminUser->isRole('root') || $this->adminUser->id === 1) {
-            logger("超管直接跳转");
+            $this->logger->info("超管直接跳转");
             return $next($req, $res);
         }
         if ($this->adminUser->hasRouter($router)) {
-            logger("用户有权限");
+            $this->logger->info("用户有权限");
             return $next($req, $res);
         }
 

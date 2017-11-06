@@ -11,7 +11,7 @@ use Slim\Http\Response;
  * Class VerifyDomainMiddleware
  * @package App\Middleware
  */
-class VerifyDomainMiddleware
+class VerifyDomainMiddleware extends Middleware
 {
 
     /**

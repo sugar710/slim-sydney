@@ -9,6 +9,7 @@ use App\Controllers\Admin\AdminRoleController;
 use App\Controllers\Admin\AdminRouterController;
 use App\Controllers\Admin\AdminMenuController;
 use App\Controllers\Admin\AdminUserController;
+use App\Controllers\Admin\AdminLogController;
 use App\Middleware\VerifyAdminLoginMiddleware;
 use App\Middleware\VerifyDomainMiddleware;
 use App\Middleware\VerifyInstallMiddleware;
@@ -32,6 +33,10 @@ $app->group("/admin", function () use ($app) {
 
     $app->group("", function () use ($app) {
         $app->get("/home", HomeController::class . ':home');
+
+        //日志查询
+        $app->get('/log', AdminLogController::class . ':index')->setName('admin.log');
+        $app->get('/log/delete', AdminLogController::class . ':doDelete');
 
         //角色管理
         $app->get('/role', AdminRoleController::class . ':index')->setName("admin.role");
@@ -59,7 +64,7 @@ $app->group("/admin", function () use ($app) {
         $app->post('/user', AdminUserController::class . ':save');
 
 
-    })->add(VerifyAdminLoginMiddleware::class)->add(\App\Middleware\VerifyRouterMiddleware::class);
+    })->add(VerifyAdminLoginMiddleware::class)->add(\App\Middleware\VerifyRouterMiddleware::class)->add(\App\Middleware\LogMiddleware::class);
 
 })->add(new VerifyInstallMiddleware(VerifyInstallMiddleware::INSTALL))
     ->add(new VerifyDomainMiddleware($adminDomain));

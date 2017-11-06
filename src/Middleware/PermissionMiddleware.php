@@ -12,7 +12,7 @@ use Slim\Http\Response;
  * Class PermissionMiddleware
  * @package App\Middleware
  */
-class PermissionMiddleware
+class PermissionMiddleware extends Middleware
 {
     private $adminUser;
     private $method;
@@ -20,8 +20,8 @@ class PermissionMiddleware
 
     public function __construct($method, $role)
     {
-        make("db");
-        $info = make("session")->get("admUser");
+        $this->db;
+        $info = $this->session->get("admUser");
         $this->adminUser = User::find($info->id);
         $this->method = $method;
         $this->role = array_filter(explode(",", $role));
@@ -35,11 +35,11 @@ class PermissionMiddleware
 
         $isAllow = $this->{$this->method}($this->role);
 
-        if($isAllow) {
+        if ($isAllow) {
             return $next($req, $res);
         }
 
-        if($req->isXhr()) {
+        if ($req->isXhr()) {
             return $res->withJson(["status" => 0, "info" => "401 Unauthorized"], 401);
         } else {
             return $res->withStatus(401)->write("401 Unauthorized");
@@ -55,8 +55,8 @@ class PermissionMiddleware
     public function allow(array $roles)
     {
         $slugs = $this->adminUser->roles()->pluck("slug")->toArray();
-        foreach($roles as $role) {
-            if(in_array($role, $slugs)) {
+        foreach ($roles as $role) {
+            if (in_array($role, $slugs)) {
                 return true;
             }
         }
@@ -72,8 +72,8 @@ class PermissionMiddleware
     public function deny(array $roles)
     {
         $slugs = $this->adminUser->roles()->pluck("slug")->toArray();
-        foreach($roles as $role) {
-            if(in_array($role, $slugs)) {
+        foreach ($roles as $role) {
+            if (in_array($role, $slugs)) {
                 return false;
             }
         }

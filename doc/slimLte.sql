@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS `operation_log` (
   `input` TEXT NOT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
-  `updated_at` DATETIME NULL,
+  `deleted_at` DATETIME NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 COMMENT = '操作日志';

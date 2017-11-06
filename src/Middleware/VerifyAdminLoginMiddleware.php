@@ -11,12 +11,13 @@ use Slim\Http\Response;
  * Class VerifyAdminLogin
  * @package App\Middleware
  */
-class VerifyAdminLoginMiddleware {
+class VerifyAdminLoginMiddleware extends Middleware
+{
 
     public function __invoke(Request $req, Response $res, callable $next)
     {
-        $adminUser = make("session")->get("admUser");
-        if(empty($adminUser)) {
+        $adminUser = $this->session->get("admUser");
+        if (empty($adminUser)) {
             return $res->withRedirect("/admin/login");
         }
         return $next($req, $res);

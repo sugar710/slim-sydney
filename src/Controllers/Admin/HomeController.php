@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Admin;
 
+use App\Models\AdminLog;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -17,7 +18,11 @@ class HomeController extends BaseController
      */
     public function home(Request $req, Response $res)
     {
-        return $this->view->render("adm.home");
+        $logs = AdminLog::orderBy("id", "desc")->take(11)->get();
+        $data = [
+            "logs" => $logs,
+        ];
+        return $this->view->render("adm.home", $data);
     }
 
 }

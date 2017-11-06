@@ -64,9 +64,9 @@ $app->group("/admin", function () use ($app) {
         $app->post('/user', AdminUserController::class . ':save');
 
 
-    })->add(VerifyAdminLoginMiddleware::class)->add(\App\Middleware\VerifyRouterMiddleware::class)->add(\App\Middleware\LogMiddleware::class);
+    })->add(VerifyAdminLoginMiddleware::class)->add(\App\Middleware\VerifyRouterMiddleware::class);
 
 })->add(new VerifyInstallMiddleware(VerifyInstallMiddleware::INSTALL))
-    ->add(new VerifyDomainMiddleware($adminDomain));
+    ->add(new VerifyDomainMiddleware($adminDomain))->add(\App\Middleware\LogMiddleware::class);
 
 require __DIR__ . '/Routers/install.php';

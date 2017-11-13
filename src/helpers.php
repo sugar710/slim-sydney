@@ -29,7 +29,8 @@ function admAsset($path)
  * @param string $default
  * @return string
  */
-function iAsset($path, $default = 'upload/default.png') {
+function iAsset($path, $default = 'upload/default.png')
+{
     return '/' . (!empty($path) ? $path : $default);
 }
 
@@ -133,6 +134,20 @@ if (!function_exists('env')) {
     }
 }
 
+/**
+ * 判断指定域名
+ *
+ * @param string $type
+ * @param null $domain
+ * @return bool
+ */
+function isDomain($type = "admin", $domain = null)
+{
+    $domain = $domain ?: env('HTTP_HOST', '');
+    $domains = env(strtoupper($type) . "_DOMAIN", "");
+    return in_array($domain, explode(",", $domains));
+}
+
 function responseReject($message, $url)
 {
     flashReject(make("request")->getParams());
@@ -217,7 +232,8 @@ function session($key, $default = null)
  * @param string $msg 日志内容
  * @param string $type 日志类型
  */
-function logger($msg, $type = "info") {
+function logger($msg, $type = "info")
+{
     make("logger")->{$type}($msg);
 }
 

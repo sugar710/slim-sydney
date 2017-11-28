@@ -35,6 +35,7 @@
     <div class="login-box-body">
         <p class="login-box-msg">登录</p>
         <form action="{{ admUrl('/login') }}" method="post">
+            <input type="hidden" name="returnUrl" value="{{ $returnUrl }}">
             <div class="form-group has-feedback">
                 <input type="text" class="form-control" name="username" autofocus="autofocus" placeholder="账号或邮箱">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
@@ -74,6 +75,12 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
     $(function () {
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            showMethod: 'slideDown',
+            timeOut: 4000
+        };
         @if($error = flash('action.error'))
         toastr.error('{{ $error }}');
         @endif

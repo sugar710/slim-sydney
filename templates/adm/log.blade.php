@@ -81,9 +81,7 @@
                                     <td>{{ $item->method }}</td>
                                     <td>{{ $item->path }}</td>
                                     <td>
-                                        <span class="label label-info">
-                                            {{ $item->input }}
-                                        </span>
+                                        <code>{{ $item->input }}</code>
                                     </td>
                                     <td>{{ $item->ip }}</td>
                                     <td>{{ $item->created_at }}</td>

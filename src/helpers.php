@@ -135,6 +135,59 @@ if (!function_exists('env')) {
 }
 
 /**
+ * parse_str 反函数
+ *
+ * @param array $url_arr
+ * @return string
+ */
+function http_build_url(array $url_arr)
+{
+    $new_url = $url_arr['scheme'] . "://" . $url_arr['host'];
+    if (!empty($url_arr['port']))
+        $new_url = $new_url . ":" . $url_arr['port'];
+    if (isset($url_arr['path'])) {
+        $new_url = $new_url . $url_arr['path'];
+    }
+    if (!empty($url_arr['query']))
+        $new_url = $new_url . "?" . $url_arr['query'];
+    if (!empty($url_arr['fragment']))
+        $new_url = $new_url . "#" . $url_arr['fragment'];
+    return $new_url;
+}
+
+/**
+ * 生成guid
+ *
+ * @param string $prefix
+ * @return string
+ */
+function guid($prefix = '') {
+    $chars = md5(uniqid(mt_rand(), true));
+    $uuid  = substr($chars,0,8) . '-';
+    $uuid .= substr($chars,8,4) . '-';
+    $uuid .= substr($chars,12,4) . '-';
+    $uuid .= substr($chars,16,4) . '-';
+    $uuid .= substr($chars,20,12);
+    return $prefix . $uuid;
+}
+
+/**
+ * url附加参数
+ *
+ * @param string $url
+ * @param array $params
+ * @return string
+ */
+function urlAppends($url = "", $params = [])
+{
+    $urlArr = parse_url($url);
+    parse_str(isset($urlArr["query"]) ? $urlArr["query"] : "", $query);
+    $query = array_merge($query, $params);
+    $urlArr["query"] = http_build_query($query);
+    return http_build_url($urlArr);
+}
+
+/**
  * 判断指定域名
  *
  * @param string $type

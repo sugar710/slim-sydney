@@ -5,13 +5,13 @@
 use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Controllers\PublicController;
-use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\HomeController;
 use App\Controllers\Admin\AdminRoleController;
 use App\Controllers\Admin\AdminRouterController;
 use App\Controllers\Admin\AdminMenuController;
 use App\Controllers\Admin\AdminUserController;
 use App\Controllers\Admin\AdminLogController;
+use App\Controllers\Admin\AuthController;
 use App\Middleware\VerifyAdminLoginMiddleware;
 use App\Middleware\VerifyDomainMiddleware;
 use App\Middleware\VerifyInstallMiddleware;
@@ -21,7 +21,15 @@ $adminDomain = env("ADMIN_DOMAIN", '');
 //文件上传
 $app->post('/public/upload', PublicController::class . ':upload');
 
+$app->get('/', function(Request $req, Response $res) {
+    return $res->withRedirect("/admin/home", 301);
+});
+
 $app->get('/admin', function (Request $req, Response $res) {
+    return $res->withRedirect("/admin/home", 301);
+});
+
+$app->get('/admin/', function (Request $req, Response $res) {
     return $res->withRedirect("/admin/home", 301);
 });
 
@@ -68,7 +76,7 @@ $app->group("/admin", function () use ($app) {
 
         require __DIR__ . '/admin.php';
 
-    })->add(VerifyAdminLoginMiddleware::class)->add(\App\Middleware\VerifyRouterMiddleware::class);
+    })->add(\App\Middleware\VerifyRouterMiddleware::class)->add(VerifyAdminLoginMiddleware::class);
 
 })
     ->add(new VerifyInstallMiddleware(VerifyInstallMiddleware::INSTALL))

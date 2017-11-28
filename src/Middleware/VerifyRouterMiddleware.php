@@ -20,7 +20,7 @@ class VerifyRouterMiddleware extends Middleware
     public function __construct()
     {
         $info = $this->session->get("admUser");
-        $this->adminUser = User::find($info->id);
+        $this->adminUser = User::find($info["id"]);
     }
 
     public function __invoke(Request $req, Response $res, callable $next)

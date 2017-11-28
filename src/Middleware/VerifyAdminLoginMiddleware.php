@@ -18,7 +18,7 @@ class VerifyAdminLoginMiddleware extends Middleware
     {
         $adminUser = $this->session->get("admUser");
         if (empty($adminUser)) {
-            return $res->withRedirect("/admin/login");
+            return $res->withRedirect("/admin/login?returnUrl=" . urlencode($req->getUri()->getPath()));
         }
         return $next($req, $res);
     }

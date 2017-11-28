@@ -114,7 +114,9 @@
                                         <td>
                                             {{ $log->path }}</td>
                                         <td>
-                                            {{ $log->input }}
+                                            <code>
+                                                {{ $log->input }}
+                                            </code>
                                         </td>
                                         <td>
                                             {{ $log->ip }}

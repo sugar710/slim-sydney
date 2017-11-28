@@ -4,7 +4,7 @@
 $container = $app->getContainer();
 
 // blade
-$container["view"] = function($c) {
+$container["view"] = function ($c) {
     $settings = $c->get("settings")["blade"];
     $view = new \duncan3dc\Laravel\BladeInstance($settings["view_path"], $settings["cache_path"]);
     return $view;
@@ -20,7 +20,7 @@ $container['logger'] = function ($c) {
 };
 
 // orm
-$container['db'] = function($c) {
+$container['db'] = function ($c) {
     $capsule = new \Illuminate\Database\Capsule\Manager();
     $capsule->addConnection($c['settings']['db']);
     $capsule->setAsGlobal();
@@ -28,7 +28,14 @@ $container['db'] = function($c) {
     return $capsule;
 };
 
-$container['schema'] = function($c) {
+// guzzle http client
+$container['guzzle'] = function ($c) {
+    return new GuzzleHttp\Client([
+        "timeout" => 60
+    ]);
+};
+
+$container['schema'] = function ($c) {
     /**
      * @var \Illuminate\Database\Capsule\Manager $db
      */
@@ -38,12 +45,12 @@ $container['schema'] = function($c) {
 };
 
 // flash
-$container['flash'] = function($c) {
+$container['flash'] = function ($c) {
     return new \Slim\Flash\Messages();
 };
 
 // session
-$container['session'] = function($c) {
+$container['session'] = function ($c) {
     return new \SlimSession\Helper;
 };
 

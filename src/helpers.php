@@ -161,13 +161,14 @@ function http_build_url(array $url_arr)
  * @param string $prefix
  * @return string
  */
-function guid($prefix = '') {
+function guid($prefix = '')
+{
     $chars = md5(uniqid(mt_rand(), true));
-    $uuid  = substr($chars,0,8) . '-';
-    $uuid .= substr($chars,8,4) . '-';
-    $uuid .= substr($chars,12,4) . '-';
-    $uuid .= substr($chars,16,4) . '-';
-    $uuid .= substr($chars,20,12);
+    $uuid = substr($chars, 0, 8) . '-';
+    $uuid .= substr($chars, 8, 4) . '-';
+    $uuid .= substr($chars, 12, 4) . '-';
+    $uuid .= substr($chars, 16, 4) . '-';
+    $uuid .= substr($chars, 20, 12);
     return $prefix . $uuid;
 }
 
@@ -249,6 +250,7 @@ function old($key, $default = null)
  * @param $key
  * @param null $msg
  * @return mixed
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function flash($key, $msg = null)
 {
@@ -265,6 +267,7 @@ function flash($key, $msg = null)
  * @param $key
  * @param null $default
  * @return bool|mixed
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function session($key, $default = null)
 {
@@ -284,6 +287,7 @@ function session($key, $default = null)
  *
  * @param string $msg 日志内容
  * @param string $type 日志类型
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function logger($msg, $type = "info")
 {
@@ -295,19 +299,25 @@ function logger($msg, $type = "info")
  *
  * @param null $name
  * @return \App\Container|mixed|null|static
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function make($name = null)
 {
     if (is_null($name)) {
         return container();
     }
-    return container()->get($name);
+    try {
+        return container()->get($name);
+    } catch (\Exception $e) {
+        return null;
+    }
+
 }
 
 /**
  * 获取容器
  *
- * @return \App\Container|null|static
+ * @return \App\Container
  */
 function container()
 {

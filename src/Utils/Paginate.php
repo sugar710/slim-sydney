@@ -80,16 +80,14 @@ class Paginate
             // 特殊情况 当前页码在中间码左侧
             if ($this->nowPage - $center_page <= 0) {
                 $page = $i;
-            }
-            // 特殊情况 当前页码在中间码右侧
+            } // 特殊情况 当前页码在中间码右侧
             else if ($this->nowPage + $center_page - 1 >= $this->pages) {
                 $page = $this->pages - $this->rollPage + $i;
-            }
-            //正常情况 当前页码在正中间
+            } //正常情况 当前页码在正中间
             else {
                 $page = $this->nowPage - ceil($center_page) + $i;
             }
-            if($page > 0 && $page <= $this->pages) {
+            if ($page > 0 && $page <= $this->pages) {
                 $roll[] = $page;
             }
 

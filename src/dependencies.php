@@ -36,9 +36,7 @@ $container['guzzle'] = function ($c) {
 };
 
 $container['schema'] = function ($c) {
-    /**
-     * @var \Illuminate\Database\Capsule\Manager $db
-     */
+    /** @var \Illuminate\Database\Capsule\Manager $db */
     $db = $c->get("db");
     $builder = $db->getConnection()->getSchemaBuilder();
     return $builder;

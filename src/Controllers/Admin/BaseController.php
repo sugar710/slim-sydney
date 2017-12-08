@@ -33,8 +33,8 @@ class BaseController extends Controller
     /**
      * 管理后台公用模板数据
      */
-    private function adminShare() {
-        //$adminMenus = AdminMenu::levelMenu();
+    private function adminShare()
+    {
         $adminMenus = $this->getAdminMenus();
         $this->view->share("adminUser", $this->adminUser);
         $this->view->share("adminMenus", $adminMenus);
@@ -46,11 +46,12 @@ class BaseController extends Controller
      *
      * @return array
      */
-    private function getAdminMenus() {
+    private function getAdminMenus()
+    {
         $list = AdminMenu::orderBy("sort", "desc")->with(["router"])->orderBy("id", "asc")->get(["id", "pid", "name", "router_id"]);
         $routers = $this->getUserRouters();
-        $list = $list->filter(function($item) use ($routers) {
-            if(empty($item->router)) {
+        $list = $list->filter(function ($item) use ($routers) {
+            if (empty($item->router)) {
                 return true;
             }
             return $this->adminUser->id == 1 || $this->adminUser->isRole('root') || in_array($item->router->id, $routers);
@@ -63,7 +64,8 @@ class BaseController extends Controller
      *
      * @return array
      */
-    private function getUserRouters() {
+    private function getUserRouters()
+    {
         $userRouter = $this->adminUser->routers()->pluck("router_id")->toArray();
         $roles = $this->adminUser->roles()->pluck("role_id")->toArray();
         $roleRouter = $this->table("admin_role_router")->whereIn("role_id", $roles)->pluck("router_id")->toArray();

@@ -49,7 +49,6 @@ trait DataProcessTrait
      * @param Request $req
      * @param Response $res
      * @return mixed
-     * @throws SlimException
      */
     public function doCreate(Request $req, Response $res)
     {

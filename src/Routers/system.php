@@ -16,24 +16,24 @@ use App\Middleware\VerifyAdminLoginMiddleware;
 use App\Middleware\VerifyDomainMiddleware;
 use App\Middleware\VerifyInstallMiddleware;
 
-$adminDomain = env("ADMIN_DOMAIN", '');
+$adminDomain = env('ADMIN_DOMAIN', '');
 
 //文件上传
 $app->post('/public/upload', PublicController::class . ':upload');
 
-$app->get('/', function(Request $req, Response $res) {
-    return $res->withRedirect("/admin/home", 301);
+$app->get('/', function (Request $req, Response $res) {
+    return $res->withRedirect('/admin/home', 301);
 });
 
 $app->get('/admin', function (Request $req, Response $res) {
-    return $res->withRedirect("/admin/home", 301);
+    return $res->withRedirect('/admin/home', 301);
 });
 
 $app->get('/admin/', function (Request $req, Response $res) {
-    return $res->withRedirect("/admin/home", 301);
+    return $res->withRedirect('/admin/home', 301);
 });
 
-$app->group("/admin", function () use ($app) {
+$app->group('/admin', function () use ($app) {
 
     $app->get('/login', AuthController::class . ':login');
 
@@ -41,16 +41,16 @@ $app->group("/admin", function () use ($app) {
 
     $app->get('/logout', AuthController::class . ':logout');
 
-    $app->group("", function () use ($app) {
+    $app->group('', function () use ($app) {
 
-        $app->get("/home", HomeController::class . ':home');
+        $app->get('/home', HomeController::class . ':home');
 
         //日志查询
         $app->get('/log', AdminLogController::class . ':index')->setName('admin.log');
         $app->get('/log/delete', AdminLogController::class . ':doDelete');
 
         //角色管理
-        $app->get('/role', AdminRoleController::class . ':index')->setName("admin.role");
+        $app->get('/role', AdminRoleController::class . ':index')->setName('admin.role');
         $app->get('/role/data', AdminRoleController::class . ':data');
         $app->get('/role/delete', AdminRoleController::class . ':doDelete');
         $app->post('/role', AdminRoleController::class . ':save');
@@ -63,7 +63,7 @@ $app->group("/admin", function () use ($app) {
 
         //菜单管理
         $app->get('/menu', AdminMenuController::class . ':index')->setName('admin.menu');
-        $app->get('/menu/data', AdminMenuController::class . ":data");
+        $app->get('/menu/data', AdminMenuController::class . ':data');
         $app->get('/menu/delete', AdminMenuController::class . ':doDelete');
         $app->post('/menu', AdminMenuController::class . ':save');
 

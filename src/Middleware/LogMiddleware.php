@@ -14,12 +14,19 @@ use Slim\Http\Response;
  */
 class LogMiddleware extends Middleware
 {
+    /** @var Request $req */
+    protected $req;
+
     public function __invoke(Request $req, Response $res, callable $next)
     {
+        $this->req = $req;
+
         $adminUser = $this->session->get("admUser");
 
+        $log = null;
+
         try {
-            AdminLog::create([
+            $log = AdminLog::create([
                 "user_id" => $adminUser ? $adminUser->id : 0,
                 "method" => $req->getMethod(),
                 "path" => $req->getUri()->getPath(),
@@ -31,7 +38,43 @@ class LogMiddleware extends Middleware
             $this->logger->info($e->getTraceAsString());
         }
 
-        return $next($req, $res);
+        $res = $next($req, $res);
+
+        $this->logReplace($log);
+
+        return $res;
+    }
+
+    /**
+     * 判断是否为登录操作
+     *
+     * @param null $path
+     * @return bool
+     */
+    private function isLoginAction($path = null)
+    {
+        $this->logger->info("req - path:" . $this->req->getUri()->getPath());
+        $path = $path ?: $this->req->getUri()->getPath();
+        return $path == "/admin/login" && $this->req->isPost();
+    }
+
+    /**
+     * 更新日志信息
+     *
+     * @param AdminLog $log
+     */
+    private function logReplace(AdminLog $log)
+    {
+        if (!$this->isLoginAction()) {
+            return;
+        }
+        $adminUser = $this->session->get("admUser");
+        if (!empty($adminUser) && !empty($log)) {
+            $log->input = json_encode(
+                array_merge($this->req->getParams(), ["password" => "******"]),
+                JSON_UNESCAPED_UNICODE);
+            $log->save();
+        }
     }
 
 }

@@ -36,7 +36,7 @@ COMMENT = '角色';
 -- Table `admin_user_role`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `admin_user_role` (
-  `id` INT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `role_id` INT NOT NULL,
   `user_id` INT NOT NULL,
   PRIMARY KEY (`id`))
@@ -68,7 +68,7 @@ COMMENT = '管理后台路由表';
 -- Table `admin_menu`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `admin_menu` (
-  `id` INT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `pid` INT NOT NULL DEFAULT 0,
   `name` VARCHAR(45) NOT NULL COMMENT '菜单名称',
   `router_id` INT UNSIGNED NOT NULL,
@@ -85,7 +85,7 @@ COMMENT = '菜单管理';
 -- Table `setting`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `setting` (
-  `id` INT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `key` VARCHAR(50) NOT NULL,
   `value` VARCHAR(150) NOT NULL,
   `created_at` DATETIME NOT NULL,
@@ -99,7 +99,7 @@ COMMENT = '系统配置';
 -- Table `category`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `category` (
-  `id` INT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL COMMENT '分类名称',
   `slug` VARCHAR(45) NOT NULL COMMENT '分类标记',
   `created_at` DATETIME NOT NULL,
@@ -113,7 +113,7 @@ COMMENT = '分类';
 -- Table `article`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `article` (
-  `id` INT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `category_id` INT NOT NULL COMMENT '文章分类ID',
   `title` VARCHAR(150) NOT NULL COMMENT '文章标题',
   `content` TEXT NOT NULL COMMENT '文章内容',
@@ -131,7 +131,7 @@ COMMENT = '文章表';
 -- Table `tags`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tags` (
-  `id` INT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL COMMENT '标签名称',
   `use_cnt` INT NOT NULL DEFAULT 0 COMMENT '使用数量',
   `created_at` DATETIME NOT NULL,
@@ -159,7 +159,7 @@ COMMENT = '文章标签关联表';
 -- Table `comment`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `comment` (
-  `id` INT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `article_id` INT NOT NULL COMMENT '文章ID',
   `content` VARCHAR(150) NOT NULL COMMENT '评论内容',
   `created_at` DATETIME NOT NULL,

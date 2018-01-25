@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use Slim\Container;
+use Slim\Exception\ContainerException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -27,15 +28,26 @@ class Controller
         $this->container = $container;
     }
 
+    /**
+     * @param $name
+     * @return mixed
+     * @throws \Exception
+     */
     public function __get($name)
     {
         if ($name == "model" && !empty($this->modelName)) {
             return new $this->modelName;
         }
-        if ($value = $this->container->get($name)) {
-            return $value;
+
+        $name = $name == "req" ? "request" : $name;
+        $name = $name == "res" ? "response" : $name;
+
+        try {
+            return $this->container->get($name);
+        } catch (\Interop\Container\Exception\ContainerException $e) {
+            $this->logException($this->req, $e);
+            throw $e;
         }
-        return null;
     }
 
     /**
@@ -101,7 +113,7 @@ class Controller
      */
     protected function backUrl($fallback = '/')
     {
-        $urls = make("request")->getHeader("HTTP_REFERER");
+        $urls = $this->req->getHeader("HTTP_REFERER");
         return $urls ? array_first($urls) : admUrl($fallback);
     }
 

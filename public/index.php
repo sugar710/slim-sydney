@@ -27,18 +27,14 @@ $container = new \App\Container($settings);
 
 $app = new \Slim\App($container);
 
-
-
 // Set up dependencies
 require __DIR__ . '/../src/dependencies.php';
 
 // Register middleware
-require __DIR__ . '/../src/middleware.php';
+$container["middleware"]->register();
 
 // Register routes
-require __DIR__ . '/../src/routes.php';
-
-$app->getContainer()["db"];
+$container["routes"]->register();
 
 // Run app
 $app->run();

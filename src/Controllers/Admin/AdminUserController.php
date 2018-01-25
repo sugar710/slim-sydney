@@ -213,6 +213,41 @@ class AdminUserController extends BaseController implements DataProcessInterface
     }
 
     /**
+     * 删除数据
+     *
+     * @param Request $req
+     * @param Response $res
+     * @return mixed
+     */
+    public function doDelete(Request $req, Response $res)
+    {
+        $id = $req->getParam("id", "");
+        $id = array_filter(explode(",", $id));
+
+        if (empty($id)) {
+            return $this->reject("请选择要删除的项", $this->backUrl());
+        }
+
+        if (in_array(1, $id) && count($id) == 1) {
+            return $this->reject("超级管理员禁止删除", $this->backUrl());
+        }
+        $id = array_diff($id, [1]);
+
+        try {
+            $list = $this->model->whereIn("id", $id)->get();
+            foreach ($list as $item) {
+                $this->relation($item, $req);
+                $item->delete();
+            }
+        } catch (\Exception $e) {
+            $this->logException($req, $e);
+            return $this->reject("数据删除失败请重试", $this->backUrl());
+        }
+
+        return $this->resolve("数据删除成功", $this->redirectToList());
+    }
+
+    /**
      * 用户列表地址
      *
      * @return string

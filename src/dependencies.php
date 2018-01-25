@@ -1,7 +1,20 @@
 <?php
 // DIC configuration
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
 $container = $app->getContainer();
+
+// routes register
+$container['routes'] = function ($c) use ($app) {
+    return new \App\Router($app);
+};
+
+// middleware register
+$container['middleware'] = function ($c) use ($app) {
+    return new \App\Middleware($app);
+};
 
 // blade
 $container["view"] = function ($c) {
@@ -20,19 +33,13 @@ $container['logger'] = function ($c) {
 };
 
 // orm
-$container['db'] = function ($c) {
-    $capsule = new \Illuminate\Database\Capsule\Manager();
-    $capsule->addConnection($c['settings']['db']);
-    $capsule->setAsGlobal();
-    $capsule->bootEloquent();
-    return $capsule;
-};
+$capsule = new \Illuminate\Database\Capsule\Manager();
+$capsule->addConnection($container['settings']['db']);
+$capsule->setAsGlobal();
+$capsule->bootEloquent();
 
-// guzzle http client
-$container['guzzle'] = function ($c) {
-    return new GuzzleHttp\Client([
-        "timeout" => 60
-    ]);
+$container['db'] = function ($c) use ($capsule) {
+    return $capsule;
 };
 
 $container['schema'] = function ($c) {
@@ -40,6 +47,13 @@ $container['schema'] = function ($c) {
     $db = $c->get("db");
     $builder = $db->getConnection()->getSchemaBuilder();
     return $builder;
+};
+
+// guzzle http client
+$container['guzzle'] = function ($c) {
+    return new GuzzleHttp\Client([
+        "timeout" => 60
+    ]);
 };
 
 // flash
@@ -52,7 +66,28 @@ $container['session'] = function ($c) {
     return new \SlimSession\Helper;
 };
 
-$container["req"] = $container["request"];
+// 错误处理
+$container['phpErrorHandler'] = function ($c) {
+    return new \App\Handlers\PhpError($c);
+};
 
-$container["res"] = $container["response"];
+// 异常处理
+$container['errorHandler'] = function ($c) {
+    return new \App\Handlers\Error($c);
+};
+
+// 404 处理
+$container['notFoundHandler'] = function ($c) {
+    return new \App\Handlers\NotFound($c);
+};
+
+/*// 控制器方法中去除req,res
+$container['foundHandler'] = function () {
+    return function (callable $callable, ServerRequestInterface $request, ResponseInterface $response, array $routeArguments) {
+        foreach ($routeArguments as $k => $v) {
+            $request = $request->withAttribute($k, $v);
+        }
+        return call_user_func($callable, $routeArguments);
+    };
+};*/
 

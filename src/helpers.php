@@ -51,21 +51,25 @@ function url($path)
  * @param string $path
  * @param array $query 查询参数
  * @return string
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function admUrl($path, $query = [])
 {
-    $admPath = make("settings")["admin"]["path"] ?: "admin";
+    $settings = make("settings")["admin"];
+
     $queryString = "";
     if (!empty($query)) {
-        $q = [];
-        if (is_string($query)) {
-            parse_str($query, $q);
-        } else {
-            $q = $query;
-        }
+        $q = $query;
+        is_string($query) && parse_str($query, $q);
         $queryString = "?" . http_build_query($q);
     }
-    return '/' . $admPath . '/' . ltrim($path, '/') . $queryString;
+
+    if (!empty($settings["domain"])) {
+        return '/' . ltrim($path, '/') . $queryString;
+    }
+
+    return '/' . ($settings['path'] ?: 'admin') . '/' . ltrim($path, '/') . $queryString;
+
 }
 
 /**
@@ -202,6 +206,14 @@ function isDomain($type = "admin", $domain = null)
     return in_array($domain, explode(",", $domains));
 }
 
+/**
+ * 成功响应
+ *
+ * @param $message
+ * @param $url
+ * @return mixed
+ * @throws \Interop\Container\Exception\ContainerException
+ */
 function responseReject($message, $url)
 {
     flashReject(make("request")->getParams());
@@ -209,6 +221,14 @@ function responseReject($message, $url)
     return make("response")->withRedirect($url);
 }
 
+/**
+ * 失败响应
+ *
+ * @param $message
+ * @param $url
+ * @return mixed
+ * @throws \Interop\Container\Exception\ContainerException
+ */
 function responseResolve($message, $url)
 {
     flash("action.success", $message);
@@ -219,6 +239,7 @@ function responseResolve($message, $url)
  * 闪存提交的数据
  *
  * @param $params
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function flashReject($params)
 {
@@ -233,6 +254,7 @@ function flashReject($params)
  * @param string $key
  * @param null $default
  * @return null
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function old($key, $default = null)
 {
@@ -295,23 +317,27 @@ function logger($msg, $type = "info")
 }
 
 /**
+ * 记录异常日志
+ *
+ * @param $msg
+ * @param Exception $e
+ * @throws \Interop\Container\Exception\ContainerException
+ */
+function loggerException($msg, \Exception $e)
+{
+    logger($msg . "\r\n" . $e->getMessage() . "\r\n" . $e->getTraceAsString(), "debug");
+}
+
+/**
  * 获取组件
  *
  * @param null $name
- * @return \App\Container|mixed|null|static
+ * @return \App\Container|mixed
  * @throws \Interop\Container\Exception\ContainerException
  */
 function make($name = null)
 {
-    if (is_null($name)) {
-        return container();
-    }
-    try {
-        return container()->get($name);
-    } catch (\Exception $e) {
-        return null;
-    }
-
+    return is_null($name) ? container() : container()->get($name);
 }
 
 /**

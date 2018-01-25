@@ -15,6 +15,11 @@ namespace App\Middleware;
 class Middleware
 {
 
+    /**
+     * @param $name
+     * @return \App\Container|mixed
+     * @throws \Interop\Container\Exception\ContainerException
+     */
     public function __get($name)
     {
         return make($name);

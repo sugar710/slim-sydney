@@ -1,8 +1,8 @@
 <?php
 return [
     'settings' => [
-        'debug' => true,
-        'displayErrorDetails' => true, // set to false in production
+        'debug' => false,
+        'displayErrorDetails' => false, // set to false in production
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
 
         // blade settings
@@ -28,7 +28,8 @@ return [
             'prefix' => '',
         ],
         'admin' => [
-            'path' => 'admin'
+            'path' => 'admin', // 无domain配置时生效
+            'domain' => env('ADMIN_DOMAIN', '')
         ]
     ],
 ];

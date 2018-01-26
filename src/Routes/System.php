@@ -4,6 +4,7 @@
 
 namespace App\Routes;
 
+use App\Controllers\Admin\FeedbackController;
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -84,6 +85,12 @@ class System
                 $app->get('/user/delete', AdminUserController::class . ':doDelete');
                 $app->get('/user/switchLock', AdminUserController::class . ':doLock');
                 $app->post('/user', AdminUserController::class . ':save');
+
+                //反馈
+                $app->get('/feedback', FeedbackController::class . ':index')->setName('admin.feedback');
+                $app->get('/feedback/data', FeedbackController::class . ':data');
+                $app->post('/feedback', FeedbackController::class . ':save');
+                $app->get('/feedback/delete', FeedbackController::class . ':doDelete');
 
             })->add(VerifyRouterMiddleware::class)->add(VerifyAdminLoginMiddleware::class);
 

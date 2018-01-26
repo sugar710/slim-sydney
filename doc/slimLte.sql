@@ -208,3 +208,18 @@ CREATE TABLE IF NOT EXISTS `operation_log` (
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 COMMENT = '操作日志';
+
+
+-- -----------------------------------------------------
+-- Table `feedback`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `sydney`.`feedback` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(200) NULL,
+  `content` VARCHAR(400) NOT NULL,
+  `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+COMMENT = '反馈';

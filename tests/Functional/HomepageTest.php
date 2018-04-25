@@ -9,6 +9,6 @@ class HomepageTest extends BaseTestCase
      */
     public function testPostHomepageNotAllowed()
     {
-
+        $this->assertTrue(200, 200);
     }
 }

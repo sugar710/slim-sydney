@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('edit') {
       steps {
-        sh 'echo "ABC"'
+        sh 'composer install'
       }
     }
   }

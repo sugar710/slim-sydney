@@ -6,10 +6,5 @@ pipeline {
         sh 'composer install'
       }
     }
-    stage('test') {
-      steps {
-        sh 'phpunit'
-      }
-    }
   }
 }

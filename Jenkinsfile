@@ -1,7 +1,7 @@
 pipeline {
   agent any
   stages {
-    stage('edit') {
+    stage('deps') {
       steps {
         sh 'composer install'
       }

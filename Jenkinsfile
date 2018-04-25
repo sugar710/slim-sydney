@@ -4,7 +4,7 @@ pipeline {
     stage('deps') {
       steps {
         sh 'composer install'
-        sh 'sudo ./vendor/phpunit/phpunit'
+        sh 'sudo ./vendor/phpunit/phpunit -c phpunit.xml'
       }
     }
   }

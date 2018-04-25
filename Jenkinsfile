@@ -2,17 +2,9 @@ pipeline {
   agent any
   stages {
     stage('deps') {
-      parallel {
-        stage('deps') {
-          steps {
-            sh 'composer install'
-          }
-        }
-        stage('test') {
-          steps {
-            sh 'phpunit'
-          }
-        }
+      steps {
+        sh 'composer install'
+        sh 'vendor/bin/phpunit tests'
       }
     }
   }

@@ -4,7 +4,7 @@ pipeline {
     stage('deps') {
       steps {
         sh 'composer install'
-        sh 'pwd'
+        sh 'pwd && phpunit'
       }
     }
   }

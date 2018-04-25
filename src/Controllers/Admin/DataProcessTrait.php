@@ -2,12 +2,23 @@
 
 namespace App\Controllers\Admin;
 
+use App\Models\Model;
 use Slim\Exception\SlimException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
  * 数据处理
+ *
+ * @property \duncan3dc\Laravel\BladeInstance view
+ * @property \Slim\Flash\Messages flash
+ * @property \Illuminate\Database\Capsule\Manager db
+ * @property \SlimSession\Helper session
+ * @property \Monolog\Logger logger
+ * @property \Illuminate\Database\Schema\Builder schema
+ * @property \Slim\Http\Request req
+ * @property \Slim\Http\Response res
+ * @property \Slim\Router router
  *
  * Trait DataProcessTrait
  * @package App\Controllers\Admin
@@ -38,28 +49,20 @@ trait DataProcessTrait
      * @param Request $req
      * @param Response $res
      * @return mixed
-     * @throws SlimException
      */
     public function doCreate(Request $req, Response $res)
     {
         $this->validateCreate($req);
-
         $data = $this->fieldFilter($req->getParams());
-        $now = date("Y-m-d H:i:s");
-        $data = array_merge($data, ["created_at" => $now, "updated_at" => $now]);
+
         try {
-            $result = $this->table($this->dataTable)->insert($data);
+            $info = $this->model->create($data);
+            $this->relation($info, $req);
         } catch (\Exception $e) {
             $this->logException($req, $e);
             return $this->reject("数据保存失败请重试", $this->backUrl());
         }
-
-
-        if ($result !== false) {
-            return $this->resolve("数据保存成功", $this->redirectToList());
-        } else {
-            return $this->reject("数据保存失败请重试", $this->backUrl());
-        }
+        return $this->resolve("数据保存成功", $this->redirectToList());
     }
 
     /**
@@ -79,17 +82,14 @@ trait DataProcessTrait
         $data = array_merge($data, ["updated_at" => date("Y-m-d H:i:s")]);
 
         try {
-            $result = $this->table($this->dataTable)->where("id", $id)->update($data);
+            $info = $this->model->find($id);
+            $this->model->where("id", $id)->update($data);
+            $this->relation($info, $req);
         } catch (\Exception $e) {
             $this->logException($req, $e);
             return $this->reject("数据更新失败请重试", $this->backUrl());
         }
-
-        if ($result !== false) {
-            return $this->resolve("数据更新成功", $this->redirectToList());
-        } else {
-            return $this->reject("数据更新失败请重试", $this->backUrl());
-        }
+        return $this->resolve("数据更新成功", $this->redirectToList());
     }
 
     /**
@@ -109,17 +109,29 @@ trait DataProcessTrait
         }
 
         try {
-            $result = $this->table($this->dataTable)->whereIn("id", $id)->delete();
-        } catch(\Exception $e) {
+            $list = $this->model->whereIn("id", $id)->get();
+            foreach ($list as $item) {
+                $this->relation($item, $req);
+                $item->delete();
+            }
+        } catch (\Exception $e) {
             $this->logException($req, $e);
             return $this->reject("数据删除失败请重试", $this->backUrl());
         }
 
-        if ($result !== false) {
-            return $this->resolve("数据删除成功", $this->redirectToList());
-        } else {
-            return $this->reject("数据删除失败请重试", $this->backUrl());
-        }
+        return $this->resolve("数据删除成功", $this->redirectToList());
+    }
+
+    /**
+     * 处理模型关联数据
+     *
+     * @param Model $info
+     * @param Request $req
+     * @return bool
+     */
+    protected function relation(Model $info, Request $req)
+    {
+        return true;
     }
 
     /**
@@ -130,22 +142,13 @@ trait DataProcessTrait
      */
     protected function fieldFilter(array $fields = [])
     {
-        $columns = $this->schema->getColumnListing($this->dataTable);
+        $tableName = $this->model->getTable();
+        $columns = $this->schema->getColumnListing($tableName);
         $fields = array_filter($fields, function ($field) use ($columns) {
             return in_array($field, $columns);
         }, ARRAY_FILTER_USE_KEY);
         return $fields;
     }
 
-    /**
-     * 记录错误信息
-     *
-     * @param Request $req
-     * @param \Exception $e
-     */
-    public function logException(Request $req, \Exception $e)
-    {
-        $this->logger->info($req->getMethod() . " " . $req->getUri()->getPath() . "\n" . $e->getMessage() . "\n" . $e->getTraceAsString());
-    }
 
 }

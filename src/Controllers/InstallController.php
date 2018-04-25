@@ -266,6 +266,10 @@ class InstallController extends Controller
         file_put_contents($file, "DB_NAME=" . $config["name"] . "\n", FILE_APPEND);
         file_put_contents($file, "DB_USER=" . $config["user"] . "\n", FILE_APPEND);
         file_put_contents($file, "DB_PASS=" . $config["password"] . "\n", FILE_APPEND);
+        file_put_contents($file, "ADMIN_DOMAIN=" . "\n", FILE_APPEND);
+        file_put_contents($file, "PASSPORT_DOMAIN=" . "\n", FILE_APPEND);
+        file_put_contents($file, "WAP_DOMAIN=" . "\n", FILE_APPEND);
+        file_put_contents($file, "API_DOMAIN=" . "\n", FILE_APPEND);
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace App\Controllers\Admin;
 
 use App\Models\AdminRole;
+use App\Models\AdminRouter;
+use App\Models\Model;
 use App\Models\User;
 use App\Utils\Paginate;
 use Slim\Exception\SlimException;
@@ -22,9 +24,7 @@ class AdminUserController extends BaseController implements DataProcessInterface
 
     protected $viewFolder = "adm.authority";
 
-    protected $dataTable = "admin_user";
-
-    protected $model = User::class;
+    protected $modelName = User::class;
 
     /**
      * 用户管理列表
@@ -38,10 +38,14 @@ class AdminUserController extends BaseController implements DataProcessInterface
         $page = $req->getParam("page", 1);
         $page = $page > 0 ? $page : 1;
         $keyword = $req->getParam("keyword", "");
-        $query = call_user_func_array([$this->model, 'orderBy'], ['id', 'asc']);
+        $query = $this->model->orderBy("id", "asc");
         $query->with(['roles']);
         if ($keyword) {
-            $query->orWhere("name", "like", "%{$keyword}%");
+            $query->where(function ($q) use ($keyword) {
+                $q->orWhere("name", "like", "%{$keyword}%")
+                    ->orWhere("username", "like", "%{$keyword}%")
+                    ->orWhere("email", "like", "%{$keyword}%");
+            });
         }
         $count = $query->count();
         $list = $query->skip(($page - 1) * $size)->take($size)->get();
@@ -64,14 +68,18 @@ class AdminUserController extends BaseController implements DataProcessInterface
         $data = [];
         $id = $req->getParam("id", 0);
         if ($id > 0) {
-            $info = call_user_func([$this->model, 'find'], $id);
+            $info = $this->model->find($id);
             $info["roles"] = $info->roles()->pluck("role_id")->toArray();
+            $info["routers"] = $info->routers()->pluck("router_id")->toArray();
         } else {
             $info = new $this->model();
             $info["roles"] = [];
+            $info["routers"] = [];
         }
         $data["info"] = $info;
         $data["roles"] = AdminRole::orderBy("id", "asc")->get(["id", "name"]);
+        $data["routers"] = AdminRouter::orderBy("sort", "desc")->get(["id", "name"]);
+        $data["adminPath"] = "/admin/user";
         return $this->render("user.data", $data);
     }
 
@@ -121,15 +129,15 @@ class AdminUserController extends BaseController implements DataProcessInterface
     public function doCreate(Request $req, Response $res)
     {
         $this->validateCreate($req);
-        $roles = $req->getParam("roles", []) ?: [];
+
         $data = $this->fieldFilter($req->getParams());
         $data = array_merge($data, ["created_at" => $this->now, "updated_at" => $this->now]);
         if ($data["password"]) {
             $data["password"] = password_hash($data["password"], PASSWORD_BCRYPT);
         }
         try {
-            $user = call_user_func([$this->model, 'create'], $data);
-            $user->roles()->attach($roles);
+            $user = $this->model->create($data);
+            $this->relation($user, $req);
         } catch (\Exception $e) {
             $this->logException($req, $e);
             return $this->reject("数据保存失败请重试", $this->backUrl());
@@ -148,7 +156,6 @@ class AdminUserController extends BaseController implements DataProcessInterface
     public function doUpdate(Request $req, Response $res)
     {
         $id = $req->getParam("id", 0);
-        $roles = $req->getParam("roles", []) ?: [];
         $this->validateUpdate($req);
 
         $data = $this->fieldFilter($req->getParams());
@@ -160,15 +167,23 @@ class AdminUserController extends BaseController implements DataProcessInterface
         }
 
         try {
-            $user = call_user_func([$this->model, 'find'], $id);
-            call_user_func_array([$this->model, 'where'], ["id", $id])->update($data);
-            $user->roles()->sync($roles);
+            $user = $this->model->find($id);
+            $this->model->where("id", $id)->update($data);
+            $this->relation($user, $req);
         } catch (\Exception $e) {
             $this->logException($req, $e);
             return $this->reject("数据更新失败请重试", $this->backUrl());
         }
 
         return $this->resolve("数据更新成功", $this->redirectToList());
+    }
+
+    protected function relation(Model $info, Request $req)
+    {
+        $roles = $req->getParam("roles", []) ?: [];
+        $routers = $req->getParam("routers", []) ?: [];
+        $info->roles()->sync($roles);
+        $info->routers()->sync($routers);
     }
 
     /**
@@ -195,6 +210,41 @@ class AdminUserController extends BaseController implements DataProcessInterface
         } else {
             return $this->reject("操作失败", $this->backUrl());
         }
+    }
+
+    /**
+     * 删除数据
+     *
+     * @param Request $req
+     * @param Response $res
+     * @return mixed
+     */
+    public function doDelete(Request $req, Response $res)
+    {
+        $id = $req->getParam("id", "");
+        $id = array_filter(explode(",", $id));
+
+        if (empty($id)) {
+            return $this->reject("请选择要删除的项", $this->backUrl());
+        }
+
+        if (in_array(1, $id) && count($id) == 1) {
+            return $this->reject("超级管理员禁止删除", $this->backUrl());
+        }
+        $id = array_diff($id, [1]);
+
+        try {
+            $list = $this->model->whereIn("id", $id)->get();
+            foreach ($list as $item) {
+                $this->relation($item, $req);
+                $item->delete();
+            }
+        } catch (\Exception $e) {
+            $this->logException($req, $e);
+            return $this->reject("数据删除失败请重试", $this->backUrl());
+        }
+
+        return $this->resolve("数据删除成功", $this->redirectToList());
     }
 
     /**

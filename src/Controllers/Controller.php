@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use Slim\Container;
+use Slim\Exception\ContainerException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -12,6 +13,7 @@ use Slim\Http\Response;
  * @property \Illuminate\Database\Capsule\Manager db
  * @property \SlimSession\Helper session
  * @property \Monolog\Logger logger
+ * @property \App\Models\Model $model
  * @property \Illuminate\Database\Schema\Builder schema
  * @property \Slim\Http\Request req
  * @property \Slim\Http\Response res
@@ -26,12 +28,26 @@ class Controller
         $this->container = $container;
     }
 
+    /**
+     * @param $name
+     * @return mixed
+     * @throws \Exception
+     */
     public function __get($name)
     {
-        if ($value = $this->container->get($name)) {
-            return $value;
+        if ($name == "model" && !empty($this->modelName)) {
+            return new $this->modelName;
         }
-        throw new \Exception($name . '不存在');
+
+        $name = $name == "req" ? "request" : $name;
+        $name = $name == "res" ? "response" : $name;
+
+        try {
+            return $this->container->get($name);
+        } catch (\Interop\Container\Exception\ContainerException $e) {
+            $this->logException($this->req, $e);
+            throw $e;
+        }
     }
 
     /**
@@ -54,7 +70,6 @@ class Controller
     public function jsonTip($status = 1, $info = "OK", $data = [])
     {
         $json = compact("status", "info");
-        $this->logger->info(print_r($json, true));
         if (is_array($status)) {
             $json = $status;
         } else {
@@ -62,6 +77,7 @@ class Controller
                 $json["data"] = $data;
             }
         }
+        $this->logger->info(print_r($json, true));
         return (new Response())->withJson($json, 200, JSON_UNESCAPED_UNICODE);
     }
 
@@ -97,7 +113,18 @@ class Controller
      */
     protected function backUrl($fallback = '/')
     {
-        $urls = make("request")->getHeader("HTTP_REFERER");
+        $urls = $this->req->getHeader("HTTP_REFERER");
         return $urls ? array_first($urls) : admUrl($fallback);
+    }
+
+    /**
+     * 记录错误信息
+     *
+     * @param Request $req
+     * @param \Exception $e
+     */
+    public function logException(Request $req, \Exception $e)
+    {
+        $this->logger->info($req->getMethod() . " " . $req->getUri()->getPath() . "\n" . $e->getMessage() . "\n" . $e->getTraceAsString());
     }
 }

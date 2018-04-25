@@ -29,7 +29,8 @@ function admAsset($path)
  * @param string $default
  * @return string
  */
-function iAsset($path, $default = 'upload/default.png') {
+function iAsset($path, $default = 'upload/default.png')
+{
     return '/' . (!empty($path) ? $path : $default);
 }
 
@@ -50,21 +51,25 @@ function url($path)
  * @param string $path
  * @param array $query 查询参数
  * @return string
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function admUrl($path, $query = [])
 {
-    $admPath = make("settings")["admin"]["path"] ?: "admin";
+    $settings = make("settings")["admin"];
+
     $queryString = "";
     if (!empty($query)) {
-        $q = [];
-        if (is_string($query)) {
-            parse_str($query, $q);
-        } else {
-            $q = $query;
-        }
+        $q = $query;
+        is_string($query) && parse_str($query, $q);
         $queryString = "?" . http_build_query($q);
     }
-    return '/' . $admPath . '/' . ltrim($path, '/') . $queryString;
+
+    if (!empty($settings["domain"])) {
+        return '/' . ltrim($path, '/') . $queryString;
+    }
+
+    return '/' . ($settings['path'] ?: 'admin') . '/' . ltrim($path, '/') . $queryString;
+
 }
 
 /**
@@ -133,6 +138,82 @@ if (!function_exists('env')) {
     }
 }
 
+/**
+ * parse_str 反函数
+ *
+ * @param array $url_arr
+ * @return string
+ */
+function http_build_url(array $url_arr)
+{
+    $new_url = $url_arr['scheme'] . "://" . $url_arr['host'];
+    if (!empty($url_arr['port']))
+        $new_url = $new_url . ":" . $url_arr['port'];
+    if (isset($url_arr['path'])) {
+        $new_url = $new_url . $url_arr['path'];
+    }
+    if (!empty($url_arr['query']))
+        $new_url = $new_url . "?" . $url_arr['query'];
+    if (!empty($url_arr['fragment']))
+        $new_url = $new_url . "#" . $url_arr['fragment'];
+    return $new_url;
+}
+
+/**
+ * 生成guid
+ *
+ * @param string $prefix
+ * @return string
+ */
+function guid($prefix = '')
+{
+    $chars = md5(uniqid(mt_rand(), true));
+    $uuid = substr($chars, 0, 8) . '-';
+    $uuid .= substr($chars, 8, 4) . '-';
+    $uuid .= substr($chars, 12, 4) . '-';
+    $uuid .= substr($chars, 16, 4) . '-';
+    $uuid .= substr($chars, 20, 12);
+    return $prefix . $uuid;
+}
+
+/**
+ * url附加参数
+ *
+ * @param string $url
+ * @param array $params
+ * @return string
+ */
+function urlAppends($url = "", $params = [])
+{
+    $urlArr = parse_url($url);
+    parse_str(isset($urlArr["query"]) ? $urlArr["query"] : "", $query);
+    $query = array_merge($query, $params);
+    $urlArr["query"] = http_build_query($query);
+    return http_build_url($urlArr);
+}
+
+/**
+ * 判断指定域名
+ *
+ * @param string $type
+ * @param null $domain
+ * @return bool
+ */
+function isDomain($type = "admin", $domain = null)
+{
+    $domain = $domain ?: env('HTTP_HOST', '');
+    $domains = env(strtoupper($type) . "_DOMAIN", "");
+    return in_array($domain, explode(",", $domains));
+}
+
+/**
+ * 成功响应
+ *
+ * @param $message
+ * @param $url
+ * @return mixed
+ * @throws \Interop\Container\Exception\ContainerException
+ */
 function responseReject($message, $url)
 {
     flashReject(make("request")->getParams());
@@ -140,6 +221,14 @@ function responseReject($message, $url)
     return make("response")->withRedirect($url);
 }
 
+/**
+ * 失败响应
+ *
+ * @param $message
+ * @param $url
+ * @return mixed
+ * @throws \Interop\Container\Exception\ContainerException
+ */
 function responseResolve($message, $url)
 {
     flash("action.success", $message);
@@ -150,6 +239,7 @@ function responseResolve($message, $url)
  * 闪存提交的数据
  *
  * @param $params
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function flashReject($params)
 {
@@ -164,6 +254,7 @@ function flashReject($params)
  * @param string $key
  * @param null $default
  * @return null
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function old($key, $default = null)
 {
@@ -181,6 +272,7 @@ function old($key, $default = null)
  * @param $key
  * @param null $msg
  * @return mixed
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function flash($key, $msg = null)
 {
@@ -197,6 +289,7 @@ function flash($key, $msg = null)
  * @param $key
  * @param null $default
  * @return bool|mixed
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function session($key, $default = null)
 {
@@ -212,23 +305,45 @@ function session($key, $default = null)
 }
 
 /**
+ * 记录日志
+ *
+ * @param string $msg 日志内容
+ * @param string $type 日志类型
+ * @throws \Interop\Container\Exception\ContainerException
+ */
+function logger($msg, $type = "info")
+{
+    make("logger")->{$type}($msg);
+}
+
+/**
+ * 记录异常日志
+ *
+ * @param $msg
+ * @param Exception $e
+ * @throws \Interop\Container\Exception\ContainerException
+ */
+function loggerException($msg, \Exception $e)
+{
+    logger($msg . "\r\n" . $e->getMessage() . "\r\n" . $e->getTraceAsString(), "debug");
+}
+
+/**
  * 获取组件
  *
  * @param null $name
- * @return \App\Container|mixed|null|static
+ * @return \App\Container|mixed
+ * @throws \Interop\Container\Exception\ContainerException
  */
 function make($name = null)
 {
-    if (is_null($name)) {
-        return container();
-    }
-    return container()->get($name);
+    return is_null($name) ? container() : container()->get($name);
 }
 
 /**
  * 获取容器
  *
- * @return \App\Container|null|static
+ * @return \App\Container
  */
 function container()
 {

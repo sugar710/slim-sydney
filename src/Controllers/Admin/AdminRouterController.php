@@ -20,7 +20,7 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
 
     protected $viewFolder = "adm.authority";
 
-    protected $dataTable = "admin_router";
+    protected $modelName = AdminRouter::class;
 
     /**
      * 路由项管理列表
@@ -34,9 +34,14 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
         $page = $req->getParam("page", 1);
         $page = $page > 0 ? $page : 1;
         $keyword = $req->getParam("keyword", "");
-        $query = $this->table($this->dataTable);
+        $query = $this->model->orderBy("sort", "desc");
+
         if ($keyword) {
-            $query->orWhere("name", "like", "%{$keyword}%")->orWhere("slug", $keyword);
+            $query->where(function ($q) use ($keyword) {
+                $q->orWhere("name", "like", "%{$keyword}%")
+                    ->orWhere("slug", $keyword)
+                    ->orWhere("path", "like", "%{$keyword}%");
+            });
         }
         $count = $query->count();
         $list = $query->skip(($page - 1) * $size)->take($size)->get();
@@ -58,11 +63,12 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
         $data = [];
         $id = $req->getParam("id", 0);
         if ($id > 0) {
-            $info = AdminRouter::find($id);
+            $info = $this->model->find($id);
         } else {
             $info = new AdminRouter();
         }
         $data["info"] = $info;
+        $data["adminPath"] = "/admin/router";
         return $this->render("router.data", $data);
     }
 
@@ -72,13 +78,14 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
      * @param Request $req
      * @throws SlimException
      */
-    protected function validateCreate(Request $req) {
+    protected function validateCreate(Request $req)
+    {
         try {
             Assert::notEmpty($req->getParam("name", ""), "路由名称不能为空");
             Assert::notEmpty($req->getParam("path", ""), "路由地址不能为空");
             Assert::notEmpty($req->getParam("slug", ""), "路由标记不能为空");
             Assert::true(in_array($req->getParam("status", "T"), ["T", "F"]), "启用状态不正确");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new SlimException($req, $this->reject($e->getMessage(), $this->backUrl()));
         }
     }
@@ -89,13 +96,14 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
      * @param Request $req
      * @throws SlimException
      */
-    protected function validateUpdate(Request $req) {
+    protected function validateUpdate(Request $req)
+    {
         try {
             Assert::notEmpty($req->getParam("name", ""), "路由名称不能为空");
             Assert::notEmpty($req->getParam("path", ""), "路由地址不能为空");
             Assert::notEmpty($req->getParam("slug", ""), "路由标记不能为空");
             Assert::true(in_array($req->getParam("status", "T"), ["T", "F"]), "启用状态不正确");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new SlimException($req, $this->reject($e->getMessage(), $this->backUrl()));
         }
     }
@@ -105,7 +113,8 @@ class AdminRouterController extends BaseController implements DataProcessInterfa
      *
      * @return string
      */
-    protected function redirectToList() {
+    protected function redirectToList()
+    {
         return $this->router->pathFor('admin.router');
     }
 }

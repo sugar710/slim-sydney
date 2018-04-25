@@ -4,12 +4,11 @@
     <section class="content-header">
         <h1>
             权限管理
-            <small>用户管理</small>
+            <small>日志查询</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="{{ admUrl('/') }}"><i class="fa fa-dashboard"></i> 首页</a></li>
-            <li><a href="javascript:;">用户管理</a></li>
-            <li class="active">用户列表</li>
+            <li class="active">日志查询</li>
         </ol>
     </section>
     <section class="content">
@@ -36,22 +35,21 @@
                                            data-action="batch-del">批量删除</a></li>
                                 </ul>
                             </div>
-                            <a href="{{ admUrl('/user/data') }}" class="btn btn-default btn-sm pull-left"
-                               style="margin-right:10px;">创建</a>
-                            <a data-href="{{ admUrl('/user/delete') }}" class="btn btn-danger btn-sm pull-left"
+                            {{--<a href="{{ admUrl('/router/data') }}" class="btn btn-default btn-sm pull-left"
+                               style="margin-right:10px;">创建</a>--}}
+                            <a data-href="{{ admUrl('/log/delete') }}" class="btn btn-danger btn-sm pull-left"
                                data-action="batch-del">删除</a>
                         </div>
                         <div class="box-tools clearfix">
-                            <form action="{{ admUrl('/user') }}" method="GET">
+                            <form action="{{ admUrl('/log') }}" method="GET">
                                 <div class="input-group input-group-sm" style="width: 180px;">
                                     <input type="text" name="keyword" value="{{ $req["keyword"] or '' }}"
                                            class="form-control pull-right" placeholder="搜索">
 
                                     <div class="input-group-btn">
-                                        <button type="submit" class="btn btn-default">
-                                            <i class="fa fa-search"></i>
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>
                                         </button>
-                                        <a href="{{ admUrl('/user') }}" class="btn btn-default">全部</a>
+                                        <a href="{{ admUrl('/log') }}" class="btn btn-default">全部</a>
                                     </div>
                                 </div>
                             </form>
@@ -62,11 +60,11 @@
                         <table class="table table-hover">
                             <tr>
                                 <th>ID</th>
-                                <th>账号</th>
-                                <th>邮箱</th>
-                                <th>昵称</th>
-                                <th>角色</th>
-                                <th>状态</th>
+                                <th>操作用户</th>
+                                <th>请求方法</th>
+                                <th>路由地址</th>
+                                <th>请求数据</th>
+                                <th>IP地址</th>
                                 <th>创建时间</th>
                                 <th>更新时间</th>
                             </tr>
@@ -74,31 +72,18 @@
                                 <tr data-id="{{ $item->id }}">
                                     <td>{{ $item->id }}</td>
                                     <td>
-                                        {{ $item->username }}
-                                    </td>
-                                    <td>
-                                        {{ $item->email }}
-                                    </td>
-                                    <td>
-                                        <a href="{{ admUrl('/user/data?id=' . $item->id) }}"
-                                           title="编辑用户">{{ $item->name or '未命名' }}</a>
-                                    </td>
-                                    <td>
-                                        @foreach($item->roles as $role)
-                                            <span class="label label-info">{{ $role->name }}</span>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @if($item->is_lock == 'F')
-                                            <a href="{{ admUrl('user/switchLock', ['id' => $item->id]) }}" title="锁定用户">
-                                                <span class="label label-success">正常</span>
-                                            </a>
+                                        @if(!empty($item->user))
+                                            {{ $item->user->username }} （{{ $item->user->name }}）
                                         @else
-                                            <a href="{{ admUrl('user/switchLock', ['id' => $item->id]) }}" title="解锁成功">
-                                                <span class="label label-danger">锁定</span>
-                                            </a>
+                                            --
                                         @endif
                                     </td>
+                                    <td>{{ $item->method }}</td>
+                                    <td>{{ $item->path }}</td>
+                                    <td>
+                                        <code>{{ $item->input }}</code>
+                                    </td>
+                                    <td>{{ $item->ip }}</td>
                                     <td>{{ $item->created_at }}</td>
                                     <td>{{ $item->updated_at }}</td>
                                 </tr>

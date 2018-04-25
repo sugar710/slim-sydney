@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Models\AdminMenu;
+use App\Models\AdminRouter;
 use App\Utils\Paginate;
 use Slim\Exception\SlimException;
 use Slim\Http\Request;
@@ -15,12 +16,13 @@ use Webmozart\Assert\Assert;
  * Class AdminMenuController
  * @package App\Controllers\Admin
  */
-class AdminMenuController extends BaseController implements DataProcessInterface {
+class AdminMenuController extends BaseController implements DataProcessInterface
+{
     use DataProcessTrait;
 
     protected $viewFolder = "adm.authority";
 
-    protected $dataTable = "admin_menu";
+    protected $modelName = AdminMenu::class;
 
     /**
      * 菜单列表
@@ -31,9 +33,9 @@ class AdminMenuController extends BaseController implements DataProcessInterface
      */
     public function index(Request $req, Response $res)
     {
-        $query = $this->table($this->dataTable)->orderBy("sort", "desc")->orderBy("id", "asc");
+        $query = $this->model->orderBy("sort", "desc")->orderBy("id", "asc");
         $list = $query->get();
-        $list = subtree($list->toArray(),0,0, 'pid');
+        $list = subtree($list->toArray(), 0, 0, 'pid');
         $data = [
             "list" => $list,
             "req" => $req->getParams()
@@ -43,6 +45,7 @@ class AdminMenuController extends BaseController implements DataProcessInterface
 
     /**
      * 创建/编辑 菜单
+     *
      * @param Request $req
      * @return string
      */
@@ -55,12 +58,13 @@ class AdminMenuController extends BaseController implements DataProcessInterface
         } else {
             $info = new AdminMenu();
         }
-        $menus = $this->table($this->dataTable)->orderBy("sort", "desc")->orderBy("id", "asc")->get()->toArray();
+        $menus = $this->model->orderBy("sort", "desc")->orderBy("id", "asc")->get()->toArray();
         $menus = subtree($menus, 0, 0, 'pid');
-        $routers = $this->table("admin_router")->get();
+        $routers = AdminRouter::orderBy("sort", "desc")->get();
         $data["info"] = $info;
         $data["menus"] = $menus;
         $data["routers"] = $routers;
+        $data["adminPath"] = "/admin/menu";
         return $this->render("menu.data", $data);
     }
 
@@ -70,10 +74,11 @@ class AdminMenuController extends BaseController implements DataProcessInterface
      * @param Request $req
      * @throws SlimException
      */
-    protected function validateCreate(Request $req) {
+    protected function validateCreate(Request $req)
+    {
         try {
             Assert::notEmpty($req->getParam("name", ""), "菜单名称不能为空");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new SlimException($req, $this->reject($e->getMessage(), $this->backUrl()));
         }
     }
@@ -84,10 +89,11 @@ class AdminMenuController extends BaseController implements DataProcessInterface
      * @param Request $req
      * @throws SlimException
      */
-    protected function validateUpdate(Request $req) {
+    protected function validateUpdate(Request $req)
+    {
         try {
             Assert::notEmpty($req->getParam("name", ""), "菜单名称不能为空");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new SlimException($req, $this->reject($e->getMessage(), $this->backUrl()));
         }
     }
@@ -97,7 +103,8 @@ class AdminMenuController extends BaseController implements DataProcessInterface
      *
      * @return string
      */
-    protected function redirectToList() {
+    protected function redirectToList()
+    {
         return $this->router->pathFor('admin.menu');
     }
 

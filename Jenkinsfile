@@ -3,8 +3,8 @@ pipeline {
   stages {
     stage('deps') {
       steps {
-        sh 'composer install'
-        build 'phpunit'
+        sh '''composer install
+phpunit -c build.xml'''
       }
     }
   }

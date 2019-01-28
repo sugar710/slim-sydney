@@ -13,7 +13,6 @@ date_default_timezone_set("Asia/Shanghai");
 
 require __DIR__ . '/../vendor/autoload.php';
 
-session_start();
 
 if(is_file(__DIR__ . '/../config.env')) {
     $dotenv = new \Dotenv\Dotenv(__DIR__ . '/../', 'config.env');

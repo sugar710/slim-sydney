@@ -20,7 +20,27 @@ $(function () {
         }
     })();
 
-    $("[data-action='check-all']").click(function(){
+
+    $('input:checkbox, input:radio').iCheck({
+        checkboxClass: 'icheckbox_square-blue',
+        radioClass: 'iradio_square-blue',
+        increaseArea: '20%' // optional
+    });
+
+    $("input:checkbox[name='checkall']").on("ifChecked", function(e) {
+        $("input:checkbox[name='id[]']").iCheck('check');
+    }).on("ifUnchecked", function(e) {
+        $("input:checkbox[name='id[]']").iCheck('uncheck');
+    });
+    $(":checkbox[name='id[]']").on('ifChanged', function(){
+        var actives = $(this).closest("tbody").find("tr input:checkbox:checked[name='id[]']").length;
+        var total = $(this).closest("tbody").find("tr :checkbox[name='id[]']").length;
+        var checkAll = $(this).closest('table').find(':checkbox[name="checkall"]');
+        checkAll.prop('checked', actives === total);
+        checkAll.iCheck('update');
+    });
+
+    /*$("[data-action='check-all']").click(function(){
         var $box = $(this).parents(".box");
         $box.find("table tr[data-id]").addClass("active");
     });
@@ -28,7 +48,7 @@ $(function () {
     $("[data-action='clear-all']").click(function(){
         var $box = $(this).parents(".box");
         $box.find("table tr[data-id]").removeClass("active");
-    });
+    });*/
 
     $("[data-action='batch-del']").click(function(){
         var $this = $(this), href = $this.data("href") || $this.attr("href"), $box = $this.parents(".box");
@@ -38,14 +58,14 @@ $(function () {
         }
     });
 
-    $(".box .box-body .table tr[data-id]").click(function(){
+    /*$(".box .box-body .table tr[data-id]").click(function(){
         $(this).toggleClass("active");
-    });
+    });*/
 
-    function getSelected($box, dataAttr) {
-        var result = [], dataAttr = dataAttr || 'id';
-        $box.find(".table tr[data-id].active").each(function() {
-            result.push($(this).data(dataAttr));
+    function getSelected($box, attr) {
+        var result = [], attr = attr || 'value';
+        $box.find(".table input:checkbox[name='id[]']:checked").each(function() {
+            result.push($(this).attr(attr));
         });
         return result;
     }

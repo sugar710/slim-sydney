@@ -59,6 +59,12 @@
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-hover">
                             <tr>
+                                <th>
+                                    <label style="font-weight:normal;">
+                                        <input type="checkbox" name="checkall" />
+                                    </label>
+                                </th>
+
                                 <th>ID</th>
                                 <th>操作用户</th>
                                 <th>请求方法</th>
@@ -70,6 +76,11 @@
                             </tr>
                             @foreach($list as $item)
                                 <tr data-id="{{ $item->id }}">
+                                    <td>
+                                        <label style="font-weight:normal;">
+                                            <input type="checkbox" name="id[]" value="{{ $item->id }}" />
+                                        </label>
+                                    </td>
                                     <td>{{ $item->id }}</td>
                                     <td>
                                         @if(!empty($item->user))

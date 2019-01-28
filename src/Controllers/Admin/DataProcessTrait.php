@@ -108,6 +108,13 @@ trait DataProcessTrait
             return $this->reject("请选择要删除的项", $this->backUrl());
         }
 
+        if (method_exists($this, 'validateDelete')) {
+            $msg = $this->validateDelete($id);
+            if ($msg !== true) {
+                return $this->reject($msg, $this->backUrl());
+            }
+        }
+
         try {
             $list = $this->model->whereIn("id", $id)->get();
             foreach ($list as $item) {

@@ -103,6 +103,13 @@ class AdminRoleController extends BaseController implements DataProcessInterface
         }
     }
 
+    protected function validateDelete(array $id = []) {
+        if (in_array(1, $id)) {
+            return "内置角色禁止删除";
+        }
+        return true;
+    }
+
     /**
      * 处理角色路由关联
      *

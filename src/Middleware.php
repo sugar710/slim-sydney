@@ -33,10 +33,12 @@ class Middleware
 
         $this->app->add(new IpAddress(true, []));
 
+        ini_set('session.save_path', realpath('../logs/sessions/'));
         $this->app->add(new Session([
             'name' => 'slim-sydney',
             'autorefresh' => true,
             'lifetime' => '1 hour',
+            //'path' => '../logs/sessions',
         ]));
 
     }

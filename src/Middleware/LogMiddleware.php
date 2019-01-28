@@ -40,7 +40,9 @@ class LogMiddleware extends Middleware
 
         $res = $next($req, $res);
 
-        $this->logReplace($log);
+        if ($log) {
+            $this->logReplace($log);
+        }
 
         return $res;
     }
